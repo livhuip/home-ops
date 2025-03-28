@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://crd.movishell.pl/dragonflydb.io/dragonfly_v1alpha1.json
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly
+spec:
+  labels:
+    dragonflydb.io/cluster: dragonfly
+  image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.28.0@sha256:e28b6920608cffaf67397d3041d20dfa2d08a292b90ed1500cda485c210b8caa
+  replicas: 3
+  args:
+    - --maxmemory=$(MAX_MEMORY)M
+    - --default_lua_flags=allow-undeclared-keys #https://github.com/immich-app/immich/issues/2542
+    - --proactor_threads=2
+    - --cluster_mode=emulated
+    - --lock_on_hashtags
+    - --s3_endpoint=${SECRET_S3_ENDPOINT}
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1M
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          key: AWS_ACCESS_KEY_ID
+          name: dragonfly-secret
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: AWS_SECRET_ACCESS_KEY
+          name: dragonfly-secret
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128M
+    limits:
+      memory: 512M
+  snapshot:
+    dir: "s3://dragonfly"
+  serviceSpec:
+    type: LoadBalancer
+    annotations:
+      lbipam.cilium.io/ips: 10.0.10.5
+      external-dns.alpha.kubernetes.io/hostname: redis.${SECRET_DOMAIN}
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "DoNotSchedule"
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: dragonfly

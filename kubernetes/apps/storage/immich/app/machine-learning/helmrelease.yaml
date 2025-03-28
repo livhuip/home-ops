@@ -1,0 +1,111 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app immich-machine-learning
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  dependsOn:
+    - name: immich-server
+      namespace: storage
+    # - name: dragonfly-operator
+    #   namespace: databse
+
+  maxHistory: 2
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+
+  values:
+    defaultPodOptions:
+      enableServiceLinks: false
+      securityContext:
+        runAsUser: 1003
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups:
+          - 1000
+          - 568
+
+    controllers:
+      immich-machine-learning:
+        annotations:
+          configmap.reloader.stakater.com/reload: &configMap immich-configmap
+          secret.reloader.stakater.com/reload: &secret immich-secret
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/immich-app/immich-machine-learning
+              tag: v1.130.1
+
+            envFrom:
+              - configMapRef:
+                  name: *configMap
+              - secretRef:
+                  name: *secret
+
+            env:
+              # General
+              IMMICH_MEDIA_LOCATION: &mediaLocation /usr/src/app/upload
+              # Ports
+              MACHINE_LEARNING_HOST: 0.0.0.0
+              MACHINE_LEARNING_PORT: &port 3003
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256M
+              limits:
+                memory: 3G
+
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+
+    persistence:
+      library:
+        enabled: true
+        existingClaim: immich-nfs
+        globalMounts:
+          - path: /usr/src/app/upload
+            subPath: img/immich
+
+      cache:
+        type: persistentVolumeClaim
+        existingClaim: immich-machine-learning-cache
+        globalMounts:
+          - path: /cache
+
+      geocoding-dump:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /usr/src/app/.reverse-geocoding-dump
+
+      transformers-cache:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /usr/src/app/.transformers_cache
