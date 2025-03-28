@@ -6,7 +6,7 @@ namespace: default
 components:
   - ../../components/common
 resources:
-  - ./echo-server/ks.yaml
+  - ./echo/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./searxng/ks.yaml
   - ./rustdesk/ks.yaml
