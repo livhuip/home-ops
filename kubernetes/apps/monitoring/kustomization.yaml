@@ -21,8 +21,5 @@ resources:
   # - ./unpoller/ks.yaml
   - ./speedtest-exporter/ks.yaml
   - ./pihole/ks.yaml
-# components:
-#   - ../../components/namespace
-#   - ../../components/flux/alerts
 components:
   - ../../components/common
