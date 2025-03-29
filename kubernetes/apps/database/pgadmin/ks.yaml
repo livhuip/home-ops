@@ -31,3 +31,6 @@ spec:
       VOLSYNC_CAPACITY: 100Mi
       VOLSYNC_UID: "5050"
       VOLSYNC_GID: "5050"
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
