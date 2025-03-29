@@ -456,11 +456,7 @@ spec:
     #       - path: /data
 
     persistence:
-      enabled: true
       config:
-        type: nfs
-        nfs:
-          server: "${NAS_IP}"
-          path: "/mnt/datastore/k3sdata/minio"
+        existingClaim: minio-nfs
         globalMounts:
           - path: /data
