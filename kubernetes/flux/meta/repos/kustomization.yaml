@@ -6,4 +6,4 @@ resources:
   - ./git
   - ./helm
   - ./oci
-  - ./app-template
+  # - ./app-template
