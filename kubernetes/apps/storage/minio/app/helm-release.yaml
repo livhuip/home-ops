@@ -289,17 +289,17 @@ spec:
                   identifier: main
                   port: *port-api
 
-    # persistence:
-    #   config:
-    #     existingClaim: minio-nfs
-    #     globalMounts:
-    #       - path: /data
-
     persistence:
-      data:
-        enabled: true
-        type: nfs
-        server: "${NAS_IP}"
-        path: "/mnt/datastore/k3sdata/minio"
+      config:
+        existingClaim: minio-nfs
         globalMounts:
           - path: /data
+
+    # persistence:
+    #   data:
+    #     enabled: true
+    #     type: nfs
+    #     server: "${NAS_IP}"
+    #     path: "/mnt/datastore/k3sdata/minio"
+    #     globalMounts:
+    #       - path: /data
