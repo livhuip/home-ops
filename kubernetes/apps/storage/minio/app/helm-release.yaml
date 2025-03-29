@@ -263,7 +263,7 @@ spec:
           hajimari.io/icon: mdi:pail
           hajimari.io/instance: "admin"
         hosts:
-          - host: &host-console "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: &host-console "{{ .Release.Name }}.hayani.xyz"
             paths:
               - path: /
                 pathType: Prefix
