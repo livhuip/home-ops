@@ -10,7 +10,7 @@ spec:
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
-    - --s3_endpoint=http://minio.storage.svc.cluster.local
+    - --s3_endpoint=http://minio.storage.svc.cluster.local:9000
   env:
     - name: MAX_MEMORY
       valueFrom:
