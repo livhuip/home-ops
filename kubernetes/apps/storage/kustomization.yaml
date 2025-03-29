@@ -13,6 +13,7 @@ resources:
   # - ./nextcloud/ks.yaml
 components:
   - ../../components/common
+  - ../../components
   # - ../../components/gatus/guarded
   # - ../../../shared/meta/components/alerts
   # - ../../../shared/meta/components/global-vars
