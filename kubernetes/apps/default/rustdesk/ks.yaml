@@ -18,14 +18,14 @@ spec:
       # VOLSYNC_STORAGECLASS: openebs-hostpath
       VOLSYNC_START_MINUTE: "11"
       # VOLSYNC_CACHE_CAPACITY: "1Gi"
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   wait: false
   interval: 30m
   retryInterval: 1m
