@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rook-ceph-mon-endpoints
+  namespace: rook-ceph-external
+data:
+  data: exegol=192.168.86.15:3300,felcroft=192.168.86.4:3300,hogwards=192.168.86.8:3300,mandalore=192.168.86.12:3300
+  mapping: '{"node":{}}'
+  maxMonId: "2"
