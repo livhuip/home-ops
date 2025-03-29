@@ -281,7 +281,7 @@ spec:
             chunked_transfer_encoding off;
           hajimari.io/enable: "false"
         hosts:
-          - host: &host-api "s3.${SECRET_DOMAIN}"
+          - host: &host-api "s3.hayani.xyz"
             paths:
               - path: /
                 pathType: Prefix
