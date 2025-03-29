@@ -7,7 +7,7 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/portainer/app
   components:
-    - ../../../components/volsync
+    # - ../../../components/volsync
     - ../../../components/gatus/guarded
   prune: true
   sourceRef:
@@ -15,10 +15,10 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: network
-  postBuild:
-    substitute:
-      APP: *app
-      # VOLSYNC_CLAIM: portainer-pvc
-      VOLSYNC_CAPACITY: 129Mi
-      VOLSYNC_START_MINUTE: "11"
-      VOLSYNC_CACHE_CAPACITY: "1Gi"
+  # postBuild:
+  #   substitute:
+  #     APP: *app
+  #     # VOLSYNC_CLAIM: portainer-pvc
+  #     VOLSYNC_CAPACITY: 129Mi
+  #     VOLSYNC_START_MINUTE: "11"
+  #     VOLSYNC_CACHE_CAPACITY: "1Gi"
