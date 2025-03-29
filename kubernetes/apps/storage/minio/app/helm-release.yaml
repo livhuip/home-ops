@@ -55,7 +55,7 @@ spec:
               MINIO_BROWSER_REDIRECT_URL: "https://minio.${SECRET_DOMAIN}"
               # MINIO_SERVER_URL: "https://cdn.${SECRET_DOMAIN}"
               # MINIO_SERVER_URL: "https://s3.${CLUSTER_DOMAIN}"
-              MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${CLUSTER_DOMAIN},https://s3.${CLUSTER_DOMAIN}
+              MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${SECRET_DOMAIN},https://s3.${SECRET_DOMAIN}
             envFrom:
               - secretRef:
                   name: minio-secret
