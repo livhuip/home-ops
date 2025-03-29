@@ -167,59 +167,63 @@
 # #           - path: /data
 
 # ---
-# # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 # apiVersion: helm.toolkit.fluxcd.io/v2
 # kind: HelmRelease
 # metadata:
 #   name: &app minio
 # spec:
-#   interval: 30m
+#   interval: 60m
 #   chartRef:
 #     kind: OCIRepository
 #     name: app-template
+#     # namespace: flux-system
+#   maxHistory: 2
 #   install:
+#     createNamespace: true
 #     remediation:
 #       retries: 3
 #   upgrade:
 #     cleanupOnFail: true
 #     remediation:
-#       strategy: rollback
 #       retries: 3
-
 #   uninstall:
 #     keepHistory: false
-
 #   values:
 #     controllers:
-#       main:
+#       minio:
 #         annotations:
 #           reloader.stakater.com/auto: "true"
 
+#         pod:
+#           securityContext:
+#             fsGroup: 1000
+#             fsGroupChangePolicy: "OnRootMismatch"
+#             supplementalGroups:
+#               - 100
+
+#           # nodeSelector: {}
+#           #   kubernetes.io/hostname: s01
+
 #         containers:
-#           main:
+#           app:
 #             image:
 #               repository: quay.io/minio/minio
-#               tag: RELEASE.2025-03-12T18-04-18Z@sha256:46b3009bf7041eefbd90bd0d2b38c6ddc24d20a35d609551a1802c558c1c958f
-
-#             args: ["server", "/data", "--console-address", ":9001"]
+#               tag: RELEASE.2025-03-12T18-04-18Z
 
 #             env:
 #               MINIO_UPDATE: "off"
-#               MINIO_PROMETHEUS_URL: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+#               MINIO_BROWSER_REDIRECT_URL: "https://minio.hayani.xyz"
+#               MINIO_SERVER_URL: "https://s3.hayani.xyz"
+#               MINIO_API_CORS_ALLOW_ORIGIN: https://minio.hayani.xyz,https://s3.hayani.xyz
 #               MINIO_PROMETHEUS_JOB_ID: minio
-#               MINIO_BROWSER_REDIRECT_URL: https://minio.hayani.xyz
-#               MINIO_SERVER_URL: http://s3.${SECRET_DOMAIN}
-#               MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${SECRET_DOMAIN},https://s3.${SECRET_DOMAIN}
+#               MINIO_PROMETHEUS_URL: https://prometheus.hayani.xyz
 #               MINIO_PROMETHEUS_AUTH_TYPE: public
-#               # MINIO_IDENTITY_OPENID_CONFIG_URL: "https://auth.${SECRET_DOMAIN}/.well-known/openid-configuration"
-#               # MINIO_IDENTITY_OPENID_CLIENT_ID: minio
-#               # MINIO_IDENTITY_OPENID_CLIENT_SECRET: "${SECRET_MINIO_OAUTH_CLIENT_SECRET}"
-#               # MINIO_IDENTITY_OPENID_SCOPES: "openid,profile,email,groups"
-#               # MINIO_IDENTITY_OPENID_REDIRECT_URI: "https://minio.${SECRET_DOMAIN}/oauth_callback"
 
 #             envFrom:
 #               - secretRef:
 #                   name: minio-secret
+
+#             args: ["server", "/data", "--console-address", ":9001"]
 
 #             probes:
 #               liveness: &probes
@@ -234,209 +238,67 @@
 #                   timeoutSeconds: 10
 #                   failureThreshold: 6
 #               readiness: *probes
-#               startup:
-#                 enabled: false
 
-#             securityContext:
-#               runAsUser: 568
-#               runAsGroup: 568
-#               fsGroup: 568
-#               fsGroupChangePolicy: OnRootMismatch
-#               supplementalGroups: [100]
+#             resources:
+#               requests:
+#                 memory: 100Mi
+#                 cpu: 100m
+#               limits:
+#                 memory: 4000Mi
 
 #     service:
-#       main:
-#         controller: main
+#       app:
+#         controller: minio
 #         ports:
 #           http:
 #             port: &port-console 9001
 #           api:
+#             enabled: true
 #             port: &port-api 9000
 
-#     ingress:
-#       main:
-#         className: internal
-#         annotations:
-#           hajimari.io/enable: "true"
-#           hajimari.io/appName: "Minio Console"
-#           hajimari.io/group: "storage"
-#           hajimari.io/icon: mdi:pail
-#           hajimari.io/instance: "admin"
-#         hosts:
-#           - host: &host-console "{{ .Release.Name }}.hayani.xyz"
-#             paths:
-#               - path: /
-#                 pathType: Prefix
-#                 service:
-#                   identifier: main
-#                   port: *port-console
+#     serviceMonitor:
+#       app:
+#         serviceName: minio
+#         endpoints:
+#           - port: s3
+#             scheme: http
+#             path: /minio/v2/metrics/cluster
+#             interval: 1m
+#             scrapeTimeout: 10s
+
+#     route:
+#       app:
+#         hostnames: ["minio.hayani.xyz"]
+#         parentRefs:
+#           - name: internal
+#             namespace: kube-system
+#             sectionName: https
+#         rules:
+#           - backendRefs:
+#               - name: *app
+#                 port: *port-console
 
 #       s3:
-#         className: internal
-#         annotations:
-#           nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
-#           nginx.ingress.kubernetes.io/proxy-body-size: 5000m
-#           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-#           nginx.ingress.kubernetes.io/configuration-snippet: |
-#             chunked_transfer_encoding off;
-#           hajimari.io/enable: "false"
-#         hosts:
-#           - host: &host-api "s3.hayani.xyz"
-#             paths:
-#               - path: /
-#                 pathType: Prefix
-#                 service:
-#                   identifier: main
-#                   port: *port-api
+#         hostnames: ["s3.hayani.xyz"]
+#         parentRefs:
+#           - name: internal
+#             namespace: kube-system
+#             sectionName: https
+#         rules:
+#           - backendRefs:
+#               - name: *app
+#                 port: *port-api
+
+#     # persistence:
+#     #   config:
+#     #     type: hostPath
+#     #     hostPath: /var/mnt/pool/minio
+#     #     globalMounts:
+#     #       - path: /data
 
 #     persistence:
 #       config:
 #         existingClaim: minio-nfs
 #         globalMounts:
 #           - path: /data
-
-#     # persistence:
-#     #   data:
-#     #     enabled: true
-#     #     type: nfs
-#     #     server: "${NAS_IP}"
-#     #     path: "/mnt/datastore/k3sdata/minio"
-#     #     globalMounts:
-#     #       - path: /data
-
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: &app minio
-spec:
-  interval: 60m
-  chartRef:
-    kind: OCIRepository
-    name: app-template
-    # namespace: flux-system
-  maxHistory: 2
-  install:
-    createNamespace: true
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
-  uninstall:
-    keepHistory: false
-  values:
-    controllers:
-      minio:
-        annotations:
-          reloader.stakater.com/auto: "true"
-
-        pod:
-          securityContext:
-            fsGroup: 1000
-            fsGroupChangePolicy: "OnRootMismatch"
-            supplementalGroups:
-              - 100
-
-          # nodeSelector: {}
-          #   kubernetes.io/hostname: s01
-
-        containers:
-          app:
-            image:
-              repository: quay.io/minio/minio
-              tag: RELEASE.2025-03-12T18-04-18Z
-
-            env:
-              MINIO_UPDATE: "off"
-              MINIO_BROWSER_REDIRECT_URL: "https://minio.hayani.xyz"
-              MINIO_SERVER_URL: "https://s3.hayani.xyz"
-              MINIO_API_CORS_ALLOW_ORIGIN: https://minio.hayani.xyz,https://s3.hayani.xyz
-              MINIO_PROMETHEUS_JOB_ID: minio
-              MINIO_PROMETHEUS_URL: https://prometheus.hayani.xyz
-              MINIO_PROMETHEUS_AUTH_TYPE: public
-
-            envFrom:
-              - secretRef:
-                  name: minio-secret
-
-            args: ["server", "/data", "--console-address", ":9001"]
-
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /minio/health/live
-                    port: 9000
-                  initialDelaySeconds: 30
-                  periodSeconds: 30
-                  timeoutSeconds: 10
-                  failureThreshold: 6
-              readiness: *probes
-
-            resources:
-              requests:
-                memory: 100Mi
-                cpu: 100m
-              limits:
-                memory: 4000Mi
-
-    service:
-      app:
-        controller: minio
-        ports:
-          http:
-            port: &port-console 9001
-          api:
-            enabled: true
-            port: &port-api 9000
-
-    serviceMonitor:
-      app:
-        serviceName: minio
-        endpoints:
-          - port: s3
-            scheme: http
-            path: /minio/v2/metrics/cluster
-            interval: 1m
-            scrapeTimeout: 10s
-
-    route:
-      app:
-        hostnames: ["minio.hayani.xyz"]
-        parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - name: *app
-                port: *port-console
-
-      s3:
-        hostnames: ["s3.hayani.xyz"]
-        parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - name: *app
-                port: *port-api
-
-    # persistence:
-    #   config:
-    #     type: hostPath
-    #     hostPath: /var/mnt/pool/minio
-    #     globalMounts:
-    #       - path: /data
-
-    persistence:
-      config:
-        existingClaim: minio-nfs
-        globalMounts:
-          - path: /data
-#kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/latest/download/standard-install.yaml
+# #kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/latest/download/standard-install.yaml
