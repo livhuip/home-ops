@@ -23,6 +23,9 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   wait: false
   interval: 30m
   retryInterval: 1m
