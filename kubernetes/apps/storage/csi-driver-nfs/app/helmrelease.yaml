@@ -74,7 +74,7 @@ spec:
       create: true
       name: nfs-slow
       parameters:
-        server: 192.168.86.200
+        server: ${NAS_IP}
         share: /mnt/datastore/k3sdata/CSI-driver-nfs
       mountOptions:
         - nfsvers=4.2
