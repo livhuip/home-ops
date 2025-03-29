@@ -339,7 +339,7 @@ spec:
               MINIO_PROMETHEUS_JOB_ID: minio
               MINIO_PROMETHEUS_AUTH_TYPE: public
               MINIO_BROWSER_REDIRECT_URL: https://minio.hayani.xyz
-              MINIO_SERVER_URL: https://minio.hayani.xyz
+              # MINIO_SERVER_URL: https://minio.hayani.xyz
               MINIO_API_CORS_ALLOW_ORIGIN: https://minio.hayani.xyz,https://s3.hayani.xyz
             envFrom:
               - secretRef:
