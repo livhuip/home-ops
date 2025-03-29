@@ -22,3 +22,6 @@ spec:
       VOLSYNC_CAPACITY: 129Mi
       VOLSYNC_START_MINUTE: "11"
       VOLSYNC_CACHE_CAPACITY: "1Gi"
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
