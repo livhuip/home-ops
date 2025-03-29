@@ -150,8 +150,16 @@ spec:
                   identifier: minio
                   port: api
 
+    # persistence:
+    #   config:
+    #     type: nfs
+    #     server: "${NAS_IP}"
+    #     path: "/mnt/datastore/k3sdata/minio"
+    #     globalMounts:
+    #       - path: /data
     persistence:
-      config:
+      data:
+        enabled: true
         type: nfs
         server: "${NAS_IP}"
         path: "/mnt/datastore/k3sdata/minio"
