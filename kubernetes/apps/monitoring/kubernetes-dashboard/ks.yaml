@@ -7,8 +7,10 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: cluster-apps-cert-manager
-    - name: cluster-apps-metrics-server
+    - name: cert-manager
+      namespace: cert-manager
+    - name: metrics-server
+      namespace: kube-system
   path: ./kubernetes/apps/monitoring/kubernetes-dashboard/app
   components:
     # - ../../../components/volsync
