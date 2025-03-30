@@ -1,23 +1,110 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/helmrelease-helm-v2.json
+# ---
+# # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/helmrelease-helm-v2.json
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: &app kubernetes-dashboard
+#   namespace: monitoring
+# spec:
+#   interval: 15m
+#   chart:
+#     spec:
+#       chart: kubernetes-dashboard
+#       version: 7.10.4
+#       sourceRef:
+#         kind: HelmRepository
+#         name: kubernetes-dashboard
+#         namespace: flux-system
+#   maxHistory: 3
+#   install:
+#     createNamespace: true
+#     remediation:
+#       retries: 3
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#   uninstall:
+#     keepHistory: false
+#   values:
+#     auth:
+#       containers:
+#         env:
+#           - name: TZ
+#             value: "${TIMEZONE}"
+#     api:
+#       containers:
+#         env:
+#           - name: TZ
+#             value: "${TIMEZONE}"
+#     web:
+#       containers:
+#         env:
+#           - name: TZ
+#             value: "${TIMEZONE}"
+#     app:
+#       containers:
+#         env:
+#           - name: TZ
+#             value: "${TIMEZONE}"
+#       ingress:
+#         enabled: true
+#         ingressClassName: internal
+#         annotations:
+#           # external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+#           # nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.networking.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+#           # nginx.ingress.kubernetes.io/auth-signin: https://auth.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
+#           # nginx.ingress.kubernetes.io/auth-response-headers: |-
+#           #   Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-entitlements,X-authentik-email,X-authentik-name,X-authentik-uid
+#           # nginx.ingress.kubernetes.io/auth-snippet: |
+#           #   proxy_set_header X-Forwarded-Host $http_host;
+#           # gethomepage.dev/enabled: "true"
+#           # gethomepage.dev/group: Monitoring
+#           # gethomepage.dev/name: Kubernetes Dashboard
+#           # gethomepage.dev/icon: kubernetes
+#           # gethomepage.dev/siteMonitor: "http://kubernetes-dashboard-web.monitoring.svc.cluster.local:8000"
+#         hosts:
+#           - &host "kubernetes.${SECRET_DOMAIN}"
+#         issuer:
+#           name: "letsencrypt-production"
+#           scope: cluster
+#         tls:
+#           enabled: true
+#     kong:
+#       admin:
+#         tls:
+#           servicePort: 8448
+#           contianerPort: 8448
+#       proxy:
+#         tls:
+#           servicePort: 443
+#           contianerPort: 8449
+#     metricsScraper:
+#       enabled: true
+#       containers:
+#         env:
+#           - name: TZ
+#             value: "${TIMEZONE}"
+#     serviceMonitor:
+#       enabled: true
+
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app kubernetes-dashboard
-  namespace: monitoring
+  name: kubernetes-dashboard
 spec:
-  interval: 15m
+  interval: 5m
   chart:
     spec:
+      # renovate: registryUrl=https://kubernetes.github.io/dashboard
       chart: kubernetes-dashboard
-      version: 7.10.4
+      version: 7.5.0
       sourceRef:
         kind: HelmRepository
         name: kubernetes-dashboard
         namespace: flux-system
-  maxHistory: 3
   install:
-    createNamespace: true
     remediation:
       retries: 3
   upgrade:
@@ -27,63 +114,37 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    auth:
-      containers:
-        env:
-          - name: TZ
-            value: "${TIMEZONE}"
-    api:
-      containers:
-        env:
-          - name: TZ
-            value: "${TIMEZONE}"
-    web:
-      containers:
-        env:
-          - name: TZ
-            value: "${TIMEZONE}"
+    # https://github.com/kubernetes/dashboard/blob/master/docs/common/arguments.md
+    # When enabled, Dashboard login view will also be shown when Dashboard is not served over HTTPS.
+    #- --enable-insecure-login
+    # When enabled, the skip button on the login page will be shown.
+    #- --enable-skip-login
+    # When enabled, Dashboard settings page will not require user to be logged in and authorized to access settings page.
+    # - --disable-settings-authorizer
+    extraArgs:
+      - --enable-insecure-login
+      - --enable-skip-login
+      - --disable-settings-authorizer
     app:
-      containers:
-        env:
-          - name: TZ
-            value: "${TIMEZONE}"
+      image:
+        pullPolicy: IfNotPresent
       ingress:
         enabled: true
         ingressClassName: internal
-        annotations:
-          # external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
-          # nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.networking.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
-          # nginx.ingress.kubernetes.io/auth-signin: https://auth.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
-          # nginx.ingress.kubernetes.io/auth-response-headers: |-
-          #   Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-entitlements,X-authentik-email,X-authentik-name,X-authentik-uid
-          # nginx.ingress.kubernetes.io/auth-snippet: |
-          #   proxy_set_header X-Forwarded-Host $http_host;
-          # gethomepage.dev/enabled: "true"
-          # gethomepage.dev/group: Monitoring
-          # gethomepage.dev/name: Kubernetes Dashboard
-          # gethomepage.dev/icon: kubernetes
-          # gethomepage.dev/siteMonitor: "http://kubernetes-dashboard-web.monitoring.svc.cluster.local:8000"
+        # annotations:
+        #   hajimari.io/enable: "true"
+        #   hajimari.io/icon: logos:kubernetes
+        #   hajimari.io/info: Kubernetes dashboard
         hosts:
-          - &host "kubernetes.${SECRET_DOMAIN}"
-        issuer:
-          name: "letsencrypt-production"
-          scope: cluster
+          - kubernetes.${SECRET_DOMAIN}
         tls:
-          enabled: true
-    kong:
-      admin:
-        tls:
-          servicePort: 8448
-          contianerPort: 8448
-      proxy:
-        tls:
-          servicePort: 443
-          contianerPort: 8449
+          hosts:
+            - kubernetes.${SECRET_DOMAIN}
     metricsScraper:
       enabled: true
-      containers:
-        env:
-          - name: TZ
-            value: "${TIMEZONE}"
-    serviceMonitor:
-      enabled: true
+    nginx:
+      enabled: false
+    cert-manager:
+      enabled: false
+    metrics-server:
+      enabled: false
