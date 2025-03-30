@@ -126,7 +126,11 @@ spec:
       - --enable-skip-login
       - --disable-settings-authorizer
     app:
-      image:
+      mode: "dashboard"
+      image: #kong:3.8@sha256:8fcdddfa7c76408e7db1c42978cf34072fe70ae44d525a7561b0d00ec7962926
+        repository: kong
+        tag: "3.8"
+        arch: "amd64"
         pullPolicy: IfNotPresent
       ingress:
         enabled: true
