@@ -134,10 +134,12 @@ spec:
     #     pullPolicy: IfNotPresent
     app:
       enabled: true
-      ingress:
-        enabled: false
-    proxy:
+    kong:
       enabled: true
+      ingressController:
+        enabled: false
+      # proxy:
+      #   enabled: true
       image:
         repository: kong
         tag: "3.8"
