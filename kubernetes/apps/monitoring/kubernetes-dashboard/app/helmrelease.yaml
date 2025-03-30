@@ -133,7 +133,9 @@ spec:
     #     arch: "amd64"
     #     pullPolicy: IfNotPresent
     app:
-      mode: "dashboard"
+      enabled: true
+      ingress:
+        enabled: false
     proxy:
       enabled: true
       image:
