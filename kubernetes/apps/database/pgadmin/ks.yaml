@@ -12,9 +12,9 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/volsync
-  dependsOn:
-    - name: volsync
-      namespace: storage
+  # dependsOn:
+  #   - name: volsync
+  #     namespace: storage
   path: ./kubernetes/apps/database/pgadmin/app
   prune: true
   sourceRef:
