@@ -21,5 +21,6 @@ resources:
   # - ./unpoller/ks.yaml
   - ./speedtest-exporter/ks.yaml
   - ./pihole/ks.yaml
+  # - ./kubernetes-dashboard/ks.yaml
 components:
   - ../../components/common
