@@ -69,8 +69,8 @@ spec:
             storage: 20Gi
       topologySpreadConstraints:
         - maxSkew: 1
-          topologyKey: "kubernetes.io/hostname"
-          whenUnsatisfiable: "DoNotSchedule"
+          # topologyKey: "kubernetes.io/hostname"
+          # whenUnsatisfiable: "DoNotSchedule"
           labelSelector:
             matchLabels:
               postgres-operator.crunchydata.com/cluster: *name
