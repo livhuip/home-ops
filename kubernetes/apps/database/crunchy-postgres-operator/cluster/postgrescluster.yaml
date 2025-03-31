@@ -219,7 +219,7 @@ spec:
     pgbackrest:
       configuration: &backupConfig
         - secret:
-            name: crunchy-pgo-secret
+            name: crunchy-postgres-secret
       global: &backupFlag # Minio
         archive-timeout: "60"
         compress-type: bz2
