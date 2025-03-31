@@ -122,7 +122,7 @@ spec:
         - name: repo1 # Minio
           s3:
             bucket: postgresql-cunchy
-            endpoint: https://minio.hayani.xyz:9000
+            endpoint: https://minio.hayani.xyz
             region: "us-east-1"
           schedules:
             full: "0 1 * * 0" # Sunday at 01:00
