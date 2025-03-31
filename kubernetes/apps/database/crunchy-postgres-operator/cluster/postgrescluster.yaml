@@ -70,7 +70,7 @@ spec:
       topologySpreadConstraints:
         - maxSkew: 2
           topologyKey: "kubernetes.io/hostname"
-          whenUnsatisfiable: "DoNotSchedule"
+          whenUnsatisfiable: "ScheduleAnyway"
           labelSelector:
             matchLabels:
               postgres-operator.crunchydata.com/cluster: *name
