@@ -26,8 +26,8 @@ spec:
   #     repo:
   #       name: repo1
   #       s3:
-  #         bucket: postgresql-cunchy
-  #         endpoint: ${CPGO_R2_ENDPOINT}db-backups
+  #         bucket: crunchy-pgo
+  #         endpoint: ${CPGO_R2_ENDPOINT}
   #         region: "us-east-1"
 
   metadata:
