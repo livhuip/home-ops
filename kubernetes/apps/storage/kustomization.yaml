@@ -8,7 +8,7 @@ resources:
   - ./csi-driver-nfs/ks.yaml
   - ./volsync/ks.yaml
   - ./minio/ks.yaml
-  - ./openebs-system/openebs/ks.yaml
+  # - ./openebs-system/openebs/ks.yaml
   - ./immich/ks.yaml
   # - ./nextcloud/ks.yaml
 components:
