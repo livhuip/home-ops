@@ -7,6 +7,12 @@ metadata:
   namespace: flux-system
 spec:
   path: ./kubernetes/apps/database/cloudnative-pg/app
+  postBuild:
+    substitute:
+      APP: *app
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
