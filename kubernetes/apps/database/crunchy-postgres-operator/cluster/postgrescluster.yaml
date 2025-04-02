@@ -111,7 +111,7 @@ spec:
         # repo1-s3-key: "${R2_KEY}"
         # repo1-s3-key-secret: "${R2_KEY_SECRET}"
         repo1-s3-key: "${MINIO_KEY}"
-        repo1-s3-key-secret: "${MINIO_KEY_SECRET}"
+        repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
         repo1-retention-full: "30" # days
         repo1-retention-full-type: "time"
         repo1-s3-uri-style: path
