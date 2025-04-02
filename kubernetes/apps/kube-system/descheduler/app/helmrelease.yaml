@@ -122,6 +122,7 @@ spec:
                   - NodeShutdown
                   - ImagePullBackOff
                   - CreateContainerConfigError
+                  - CrashLoopBackOff
                   - error
                 exitCodes:
                   - 1
