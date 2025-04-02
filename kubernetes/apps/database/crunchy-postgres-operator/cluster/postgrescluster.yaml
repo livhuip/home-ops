@@ -96,65 +96,21 @@ spec:
       password:
         type: AlphaNumeric
 
-  # backups:
-  #   pgbackrest:
-  #     configuration:
-  #       - secret:
-  #           name: crunchy-postgres-secret
-  #     global: &backupFlag
-  #       compress-type: "bz2"
-  #       compress-level: "9"
-  #       # Minio
-  #       repo1-block: "y"
-  #       repo1-bundle: "y"
-  #       repo1-path: /crunchy-pgo
-  #       repo1-retention-full: "30" # days
-  #       repo1-retention-full-type: "time"
-  #       repo1-s3-uri-style: path
-  #     manual:
-  #       repoName: repo1
-  #       options:
-  #         - --type=full
-  #     metadata:
-  #       labels:
-  #         app.kubernetes.io/name: crunchy-postgres-backup
-  #     repos:
-  #       - name: repo1 # Minio
-  #         s3:
-  #           bucket: crunchy-pgo
-  #           endpoint: ${CPGO_R2_ENDPOINT}
-  #           region: "us-east-1"
-  #         schedules:
-  #           full: "0 1 * * 0" # Sunday at 01:00
-  #           differential: "0 1 * * 1-6" # Mon-Sat at 01:00
-  #           incremental: "0 2-23 * * *" # Every hour except 01:00
   backups:
     pgbackrest:
-      configuration: &backupConfig
+      configuration:
         - secret:
             name: crunchy-postgres-secret
-      global: &backupFlag # Minio
-        archive-timeout: "60"
-        compress-type: bz2
+      global: &backupFlag
+        compress-type: "bz2"
         compress-level: "9"
-        repo1-block: y
-        repo1-bundle: y
-        repo1-bundle-size: 100MiB
-        repo1-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo1
-        repo1-retention-full: "30" #30 days
-        repo1-retention-full-type: time
+        # Minio
+        repo1-block: "y"
+        repo1-bundle: "y"
+        repo1-path: /crunchy-pgo
+        repo1-retention-full: "30" # days
+        repo1-retention-full-type: "time"
         repo1-s3-uri-style: path
-        # R2
-        repo2-block: n
-        repo2-bundle: y
-        repo2-bundle-size: 100MiB
-        repo2-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo2
-        repo2-retention-archive: "1"
-        repo2-retention-archive-type: full
-        repo2-retention-full: "7"
-        repo2-retention-full-type: time
-        repo2-retention-history: "0"
-        repo2-s3-uri-style: path
       manual:
         repoName: repo1
         options:
@@ -163,23 +119,67 @@ spec:
         labels:
           app.kubernetes.io/name: crunchy-postgres-backup
       repos:
-        - name: repo1
-          s3: &minio
+        - name: repo1 # Minio
+          s3:
             bucket: crunchy-pgo
-            endpoint: https://minio.storage.svc.cluster.local:9001
-            region: eu-east-1
+            endpoint: https://minio.storage.svc.cluster.local:9001 #${CPGO_R2_ENDPOINT}
+            region: "us-east-1"
           schedules:
-            full: "30 1 * * 0" # Sunday at 1:30am
-            differential: "30 1 * * 1-6" # Mon-Sat at 1:30am
-            incremental: "30 3-23 * * *" # Every hour except 1-2am
-        - name: repo2
-          s3: &r2
-            bucket: crunchy-pgo
-            endpoint: ${CPGO_R2_ENDPOINT}/db-backups
-            region: us-east-1 #https://developers.cloudflare.com/r2/api/s3/api/#bucket-region
-          schedules:
-            full: "30 2 * * 0" # Sunday at 2:30am
-            differential: "30 2 * * 1-6/2" # Mon-Sat at 2:30am, every 2nd day.
+            full: "0 1 * * 0" # Sunday at 01:00
+            differential: "0 1 * * 1-6" # Mon-Sat at 01:00
+            incremental: "0 2-23 * * *" # Every hour except 01:00
+  # backups:
+  #   pgbackrest:
+  #     configuration: &backupConfig
+  #       - secret:
+  #           name: crunchy-postgres-secret
+  #     global: &backupFlag # Minio
+  #       archive-timeout: "60"
+  #       compress-type: bz2
+  #       compress-level: "9"
+  #       repo1-block: y
+  #       repo1-bundle: y
+  #       repo1-bundle-size: 100MiB
+  #       repo1-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo1
+  #       repo1-retention-full: "30" #30 days
+  #       repo1-retention-full-type: time
+  #       repo1-s3-uri-style: path
+  #       # R2
+  #       repo2-block: n
+  #       repo2-bundle: y
+  #       repo2-bundle-size: 100MiB
+  #       repo2-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo2
+  #       repo2-retention-archive: "1"
+  #       repo2-retention-archive-type: full
+  #       repo2-retention-full: "7"
+  #       repo2-retention-full-type: time
+  #       repo2-retention-history: "0"
+  #       repo2-s3-uri-style: path
+  #     manual:
+  #       repoName: repo1
+  #       options:
+  #         - --type=full
+  #     metadata:
+  #       labels:
+  #         app.kubernetes.io/name: crunchy-postgres-backup
+  #     repos:
+  #       - name: repo1
+  #         s3: &minio
+  #           bucket: crunchy-pgo
+  #           endpoint: https://minio.storage.svc.cluster.local:9001
+  #           region: eu-east-1
+  #         schedules:
+  #           full: "30 1 * * 0" # Sunday at 1:30am
+  #           differential: "30 1 * * 1-6" # Mon-Sat at 1:30am
+  #           incremental: "30 3-23 * * *" # Every hour except 1-2am
+  #       - name: repo2
+  #         s3: &r2
+  #           bucket: crunchy-pgo
+  #           endpoint: ${CPGO_R2_ENDPOINT}/db-backups
+  #           region: us-east-1 #https://developers.cloudflare.com/r2/api/s3/api/#bucket-region
+  #         schedules:
+  #           full: "30 2 * * 0" # Sunday at 2:30am
+  #           differential: "30 2 * * 1-6/2" # Mon-Sat at 2:30am, every 2nd day.
 
   monitoring:
     pgmonitor:
