@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: vaultwarden
 resources:
   # []
-  - ./externalsecret.yaml
+  # - ./externalsecret.yaml
   # - ./helmrelease.yaml
   - ./namespace.yaml
   # - ../../../../templates/gatus/external
