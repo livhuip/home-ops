@@ -27,7 +27,7 @@ spec:
   #       name: repo1
   #       s3:
   #         bucket: crunchy-pgo
-  #         endpoint: ${CPGO_R2_ENDPOINT}
+  #         endpoint: https://s3.${SECRET_DOMAIN}
   #         region: "us-east-1"
 
   metadata:
@@ -137,7 +137,7 @@ spec:
         - name: repo1 # Minio
           s3:
             bucket: crunchy-pgo
-            endpoint: https://s3.hayani.xyz #${CPGO_R2_ENDPOINT}
+            endpoint: https://s3.${SECRET_DOMAIN} #${CPGO_R2_ENDPOINT}
             region: "weur"
           schedules:
             full: "0 1 * * 0" # Sunday at 01:00

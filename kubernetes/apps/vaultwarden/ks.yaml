@@ -7,9 +7,9 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/vaultwarden/app
-  components:
-    - ../../../components/volsync
-    - ../../../components/gatus/external
+  # components:
+  #   - ../../../components/volsync
+  #   - ../../../components/gatus/external
   # dependsOn:
   #   - name: crunchy-postgres-operator-cluster
   #     namespace: database
@@ -17,10 +17,9 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      # VOLSYNC_CLAIM: portainer-pvc
-      VOLSYNC_CAPACITY: 2Gi
-      VOLSYNC_START_MINUTE: "11"
-      VOLSYNC_CACHE_CAPACITY: "1Gi"
+      # VOLSYNC_CAPACITY: 2Gi
+      # VOLSYNC_START_MINUTE: "11"
+      # VOLSYNC_CACHE_CAPACITY: "1Gi"
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
