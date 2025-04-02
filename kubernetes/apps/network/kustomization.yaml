@@ -9,4 +9,4 @@ components:
 resources:
   - ./external/ks.yaml
   - ./internal/ks.yaml
-  - ./pihole/ks.yaml
+  # - ./pihole/ks.yaml
