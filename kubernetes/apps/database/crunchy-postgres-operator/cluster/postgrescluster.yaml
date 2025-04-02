@@ -109,7 +109,7 @@ spec:
         repo1-bundle: "y"
         repo1-path: /crunchy-pgo
         repo1-s3-key: "${R2_KEY}"
-
+        repo1-s3-key-secret: ${R2_KEY_SECRET}
         repo1-retention-full: "30" # days
         repo1-retention-full-type: "time"
         repo1-s3-uri-style: path
