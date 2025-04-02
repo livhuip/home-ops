@@ -10,6 +10,10 @@ spec:
   components:
     - ../../../components/volsync
     - ../../../components/gatus/external
+  # dependsOn:
+  #   - name: crunchy-postgres-operator-cluster
+  #     namespace: database
+
   postBuild:
     substitute:
       APP: *app
@@ -29,9 +33,9 @@ spec:
   dependsOn:
     - name: crunchy-postgres-operator-cluster
       namespace: database
-    # - name: onepassword
-    #   namespace: external-secrets
-    # - name: haproxy
-    #   namespace: rook-ceph-external
-    # - name: volsync
-    #   namespace: storage
+    - name: onepassword
+      namespace: external-secrets
+    - name: haproxy
+      namespace: rook-ceph-external
+    - name: volsync
+      namespace: storage
