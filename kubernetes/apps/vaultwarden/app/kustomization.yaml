@@ -6,7 +6,7 @@ namespace: vaultwarden
 resources:
   # []
   - ./externalsecret.yaml
-  # - ./helmrelease.yaml
+  - ./helmrelease.yaml
   - ./namespace.yaml
   # - ../../../../templates/gatus/external
   # - ../../../componets/volsync

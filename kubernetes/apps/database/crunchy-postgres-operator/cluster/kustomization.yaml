@@ -5,6 +5,6 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./postgrescluster.yaml
-  # - ./podmonitor.yaml
-  # - ./gatus.yaml
+  - ./podmonitor.yaml
+  - ./gatus.yaml
 #  - ./restore.yaml
