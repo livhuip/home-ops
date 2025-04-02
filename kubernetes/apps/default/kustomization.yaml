@@ -9,5 +9,5 @@ resources:
   - ./echo/ks.yaml
   - ./smtp-relay/ks.yaml
   - ./searxng/ks.yaml
-  - ./rustdesk/ks.yaml
+  # - ./rustdesk/ks.yaml
   - ./it-tools/ks.yaml
