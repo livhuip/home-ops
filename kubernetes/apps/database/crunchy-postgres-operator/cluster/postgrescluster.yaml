@@ -108,13 +108,24 @@ spec:
         repo1-block: "y"
         repo1-bundle: "y"
         repo1-path: /crunchy-pgo
-        # repo1-s3-key: "${R2_KEY}"
-        # repo1-s3-key-secret: "${R2_SECRET_KEY}"
         repo1-s3-key: "${MINIO_KEY}"
         repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
         repo1-retention-full: "30" # days
         repo1-retention-full-type: "time"
         repo1-s3-uri-style: path
+        # R2
+        repo2-block: n
+        repo2-bundle: y
+        repo2-bundle-size: 100MiB
+        repo2-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo2
+        repo2-s3-key: "${R2_KEY}"
+        repo2-s3-key-secret: "${R2_SECRET_KEY}"
+        repo2-retention-archive: "1"
+        repo2-retention-archive-type: full
+        repo2-retention-full: "7"
+        repo2-retention-full-type: time
+        repo2-retention-history: "0"
+        repo2-s3-uri-style: path
       manual:
         repoName: repo1
         options:
@@ -132,6 +143,14 @@ spec:
             full: "0 1 * * 0" # Sunday at 01:00
             differential: "0 1 * * 1-6" # Mon-Sat at 01:00
             incremental: "0 2-23 * * *" # Every hour except 01:00
+        - name: repo2
+          s3: &r2
+            bucket: crunchy-pgo
+            endpoint: ${CPGO_R2_ENDPOINT}
+            region: "weur" #https://developers.cloudflare.com/r2/api/s3/api/#bucket-region
+          schedules:
+            full: "30 2 * * 0" # Sunday at 2:30am
+            differential: "30 2 * * 1-6/2" # Mon-Sat at 2:30am, every 2nd day.
 
   # backups:
   #   pgbackrest:
