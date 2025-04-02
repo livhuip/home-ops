@@ -7,30 +7,30 @@ metadata:
 spec:
   postgresVersion: 16
 
-  dataSource:
-    pgbackrest:
-      stanza: db
-      configuration:
-        - secret:
-            name: crunchy-postgres-secret
-      global:
-        compress-type: "bz2"
-        compress-level: "9"
-        # Minio
-        repo1-block: "y"
-        repo1-bundle: "y"
-        repo1-path: /crunchy-pgo
-        repo1-s3-key: "${MINIO_KEY}"
-        repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
-        repo1-retention-full: "30" # days
-        repo1-retention-full-type: "time"
-        repo1-s3-uri-style: path
-      repo:
-        name: repo1
-        s3:
-          bucket: crunchy-pgo
-          endpoint: https://s3.${SECRET_DOMAIN}
-          region: "us-east-1"
+  # dataSource:
+  #   pgbackrest:
+  #     stanza: db
+  #     configuration:
+  #       - secret:
+  #           name: crunchy-postgres-secret
+  #     global:
+  #       compress-type: "bz2"
+  #       compress-level: "9"
+  #       # Minio
+  #       repo1-block: "y"
+  #       repo1-bundle: "y"
+  #       repo1-path: /crunchy-pgo
+  #       repo1-s3-key: "${MINIO_KEY}"
+  #       repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
+  #       repo1-retention-full: "30" # days
+  #       repo1-retention-full-type: "time"
+  #       repo1-s3-uri-style: path
+  #     repo:
+  #       name: repo1
+  #       s3:
+  #         bucket: crunchy-pgo
+  #         endpoint: https://s3.${SECRET_DOMAIN}
+  #         region: "us-east-1"
 
   metadata:
     labels:
@@ -100,7 +100,7 @@ spec:
 
   backups:
     pgbackrest:
-      configuration:
+      configuration: &backupConfig
         - secret:
             name: crunchy-postgres-secret
       global: &backupFlag
@@ -137,7 +137,7 @@ spec:
           app.kubernetes.io/name: crunchy-postgres-backup
       repos:
         - name: repo1 # Minio
-          s3:
+          s3: &minio
             bucket: crunchy-pgo
             endpoint: https://s3.${SECRET_DOMAIN} #${CPGO_R2_ENDPOINT}
             region: "weur"
@@ -153,7 +153,14 @@ spec:
           schedules:
             full: "30 2 * * 0" # Sunday at 2:30am
             differential: "30 2 * * 1-6/2" # Mon-Sat at 2:30am, every 2nd day.
-
+  dataSource:
+    pgbackrest:
+      stanza: db
+      configuration: *backupConfig
+      global: *backupFlag
+      repo:
+        name: repo1
+        s3: *minio
   # backups:
   #   pgbackrest:
   #     configuration: &backupConfig
