@@ -140,7 +140,7 @@ spec:
         repo1-block: y
         repo1-bundle: y
         repo1-bundle-size: 100MiB
-        repo1-path: /pgdata/crunchy-pgo/repo1
+        repo1-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo1
         repo1-retention-full: "30" #30 days
         repo1-retention-full-type: time
         repo1-s3-uri-style: path
@@ -148,7 +148,7 @@ spec:
         repo2-block: n
         repo2-bundle: y
         repo2-bundle-size: 100MiB
-        repo2-path: /pgdata/crunchy-pgo/repo2
+        repo2-path: /crunchy-pgo #/pgdata/crunchy-pgo/repo2
         repo2-retention-archive: "1"
         repo2-retention-archive-type: full
         repo2-retention-full: "7"
@@ -165,7 +165,7 @@ spec:
       repos:
         - name: repo1
           s3: &minio
-            bucket: postgresql-cunchy
+            bucket: crunchy-pgo
             endpoint: https://minio.storage.svc.cluster.local:9001
             region: eu-east-1
           schedules:
