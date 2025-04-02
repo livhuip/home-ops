@@ -122,8 +122,8 @@ spec:
         - name: repo1 # Minio
           s3:
             bucket: crunchy-pgo
-            endpoint: https://0a893a890f1f3d4d112a5accf6c040df.r2.cloudflarestorage.com #${CPGO_R2_ENDPOINT}
-            region: "us-east-1"
+            endpoint: ${CPGO_R2_ENDPOINT}
+            region: "weur"
           schedules:
             full: "0 1 * * 0" # Sunday at 01:00
             differential: "0 1 * * 1-6" # Mon-Sat at 01:00
