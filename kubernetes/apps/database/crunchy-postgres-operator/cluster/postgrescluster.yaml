@@ -126,7 +126,7 @@ spec:
         - name: repo1 # Minio
           s3:
             bucket: crunchy-pgo
-            endpoint: http://minio.storage.svc.cluster.local:9000 #${CPGO_R2_ENDPOINT}
+            endpoint: https://s3.hayani.xyz:9000 #${CPGO_R2_ENDPOINT}
             region: "weur"
           schedules:
             full: "0 1 * * 0" # Sunday at 01:00
