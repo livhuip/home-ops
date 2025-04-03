@@ -7,4 +7,4 @@ resources:
   - ./externalsecret.yaml
   - ./gatus.yaml
   - ./pushsecret.yaml
-  - ./podmonitoring.yaml
+  - ./podmonitor.yaml
