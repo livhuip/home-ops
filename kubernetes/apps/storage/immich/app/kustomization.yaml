@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ./pvc.yaml
   - ./server
-  # - ./machine-learning
+  - ./machine-learning
   - ./configmap.yaml
   - ./externalsecret.yaml
   # - ./microservices
