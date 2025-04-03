@@ -5,16 +5,21 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./kubernetes/apps/portainer/app
+  path: ./kubernetes/apps/default/portainer/app
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph-external
+    - name: volsync
+      namespace: storage
   components:
-    - ../../../components/volsync
-    - ../../../components/gatus/guarded
+    - ../../../../components/volsync
+    - ../../../../components/gatus/guarded
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: network
+  targetNamespace: default
   postBuild:
     substitute:
       APP: *app

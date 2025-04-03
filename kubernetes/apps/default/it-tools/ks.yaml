@@ -29,3 +29,6 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: utils
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
