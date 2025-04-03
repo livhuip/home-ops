@@ -24,7 +24,7 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: vaultwarden
+  targetNamespace: default
   dependsOn:
     - name: crunchy-postgres-operator-cluster
       namespace: database
