@@ -1,7 +1,7 @@
 ---
 - Home:
     - HomeAssistant:
-        href: https://ha.${CLUSTER_DOMAIN}
+        href: https://hass.${CLUSTER_DOMAIN}
         icon: home-assistant.png
         description: Home Assistant
         widget:

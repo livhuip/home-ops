@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./kubernetes/apps/portainer/app
+  path: ./kubernetes/apps/default/app
   components:
     - ../../../components/volsync
     - ../../../components/gatus/guarded
