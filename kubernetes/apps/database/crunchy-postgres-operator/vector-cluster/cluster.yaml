@@ -3,22 +3,22 @@ apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
   name: &name postgres-vector
-  labels:
-    crunchy-users.henrywhitaker3.github.com/watch: "true"
-  annotations:
-    crunchy-users.henrywhitaker3.github.com/superuser: "postgres"
-    crunchy-users.henrywhitaker3.github.com/extensions: |
-      [
-        {
-          "database": "immich_db",
-          "extension": "vectors"
-        },
-        {
-          "database": "immich_db",
-          "extension": "earthdistance",
-          "cascade": true
-        }
-      ]
+  # labels:
+  #   crunchy-users.henrywhitaker3.github.com/watch: "true"
+  # annotations:
+  #   crunchy-users.henrywhitaker3.github.com/superuser: "postgres"
+  #   crunchy-users.henrywhitaker3.github.com/extensions: |
+  #     [
+  #       {
+  #         "database": "immich_db",
+  #         "extension": "vectors"
+  #       },
+  #       {
+  #         "database": "immich_db",
+  #         "extension": "earthdistance",
+  #         "cascade": true
+  #       }
+  #     ]
 spec:
   postgresVersion: 16
   image: ghcr.io/drag0n141/cdpgvector:0.3.0@sha256:6bd40ba06b7da1885fbabb66b8b672fea865e6dce7f5c1a1195b4b97a75b43eb
