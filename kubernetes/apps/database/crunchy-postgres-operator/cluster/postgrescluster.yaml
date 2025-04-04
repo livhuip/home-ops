@@ -93,10 +93,6 @@ spec:
     #   databases: ["gatus"]
     #   password:
     #     type: AlphaNumeric
-    - name: "nextcloud"
-      databases: ["nextcloud"]
-      password:
-        type: AlphaNumeric
     - name: "vaultwarden"
       databases: ["vaultwarden"]
       password:
