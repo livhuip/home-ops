@@ -159,7 +159,7 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: app-template
+    name: nextcloud
   values:
     deploymentLabels:
       nfsMount: "true"
