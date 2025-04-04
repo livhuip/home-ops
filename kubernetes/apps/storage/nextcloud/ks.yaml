@@ -18,6 +18,10 @@ spec:
       VOLSYNC_CAPACITY: 5Gi
       # VOLSYNC_UID: "1022"
       # VOLSYNC_GID: "1022"
+      VOLSYNC_START_MINUTE: "11"
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
