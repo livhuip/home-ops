@@ -166,26 +166,26 @@ spec:
     deploymentAnnotations:
       reloader.stakater.com/auto: "true"
     nextcloud:
-      host: &host nextcloud.${SECRET_DOMAIN}
+      host: &host cloud.${SECRET_DOMAIN}
       extraVolumes:
         - name: nfs-home
           nfs:
-            server: "nas01.${SECRET_DOMAIN_INT}"
-            path: "/mnt/data/home"
+            server: "${NAS_IP}"
+            path: "/mnt/datastore/k3sdata/nextcloud"
       extraVolumeMounts:
         - name: nfs-home
-          mountPath: "/mnt/data/home"
-      extraEnv:
-        - name: OIDC_CLIENT_ID
-          valueFrom:
-            secretKeyRef:
-              name: &secret nextcloud-secret
-              key: OIDC_CLIENT_ID
-        - name: OIDC_CLIENT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: *secret
-              key: OIDC_CLIENT_SECRET
+          mountPath: "/mnt/datastore/k3sdata/nextcloud"
+      # extraEnv:
+      #   - name: OIDC_CLIENT_ID
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: &secret nextcloud-secret
+      #         key: OIDC_CLIENT_ID
+      #   - name: OIDC_CLIENT_SECRET
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: *secret
+      #         key: OIDC_CLIENT_SECRET
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
