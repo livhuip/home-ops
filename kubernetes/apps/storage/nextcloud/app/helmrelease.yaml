@@ -199,14 +199,14 @@ spec:
         smtpHostKey: SMTP_HOST
         smtpUsernameKey: SMTP_USERNAME
         smtpPasswordKey: SMTP_PASSWORD
-      mail:
-        enabled: true
-        fromAddress: nextcloud
-        domain: ${SECRET_DOMAIN}
-        smtp:
-          port: 2525
-          secure: NONE
-          authtype: NONE
+      # mail:
+      #   enabled: true
+      #   fromAddress: nextcloud
+      #   domain: ${SECRET_DOMAIN}
+      #   smtp:
+      #     port: 2525
+      #     secure: NONE
+      #     authtype: NONE
       defaultConfigs:
         redis.config.php: false
       configs:
@@ -216,15 +216,15 @@ spec:
             'trusted_proxies' =>
             array (
               0 => '127.0.0.1',
-              1 => '${CLUSTER_CIDR}',
-              2 => '${SERVICE_CIDR}',
+              1 => '10.42.0.0/16',
+              2 => '10.43.0.0/16',
             ),
             'forwarded_for_headers' =>
             array (
               0 => 'HTTP_X_FORWARDED_FOR',
             ),
-            'default_phone_region' => 'DE',
-            'overwrite.cli.url' => 'https://nextcloud.${SECRET_DOMAIN}',
+            'default_phone_region' => 'ZA',
+            'overwrite.cli.url' => 'https://cloud.${SECRET_DOMAIN}',
             'overwriteprotocol' => 'https',
             'quota_include_external_storage' => 'false',
             'skeletondirectory' => '',
@@ -320,21 +320,58 @@ spec:
       enabled: false
     startupProbe:
       enabled: false
+    # ingress:
+    #   enabled: true
+    #   className: traefik-external
+    #   annotations:
+    #     external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
+    #     external-dns.alpha.kubernetes.io/exclude-unifi: "true"
+    #     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    #     traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    #     traefik.ingress.kubernetes.io/router.middlewares: "networking-traefik-middleware-chain-no-auth@kubernetescrd"
+    #   path: /
+    #   pathType: Prefix
+    #   tls:
+    #     - hosts:
+    #         - *host
+    #       secretName: "${SECRET_DOMAIN/./-}-production-tls"
     ingress:
       enabled: true
-      className: traefik-external
+      className: "external"
       annotations:
-        external-dns.alpha.kubernetes.io/target: "ipv4.${SECRET_DOMAIN}"
-        external-dns.alpha.kubernetes.io/exclude-unifi: "true"
-        external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
-        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-        traefik.ingress.kubernetes.io/router.middlewares: "networking-traefik-middleware-chain-no-auth@kubernetescrd"
+        external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+        nginx.ingress.kubernetes.io/proxy-body-size: "10G"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+        nginx.ingress.kubernetes.io/server-snippet: |-
+          server_tokens off;
+          proxy_hide_header X-Powered-By;
+
+          rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
+          rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+          rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+          location = /.well-known/carddav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /.well-known/caldav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+          }
+          location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+            deny all;
+          }
+          location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+            deny all;
+          }
       path: /
       pathType: Prefix
-      tls:
-        - hosts:
-            - *host
-          secretName: "${SECRET_DOMAIN/./-}-production-tls"
+      # tls:
+      # - hosts:
+      #   - cloud.${SECRET_DOMAIN}
     persistence:
       enabled: true
-      existingClaim: nextcloud
+      existingClaim: *app
