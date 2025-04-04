@@ -173,7 +173,7 @@ spec:
             server: "${NAS_IP}"
             path: "/mnt/datastore/k3sdata/nextcloud"
       extraVolumeMounts:
-        - name: "${NAS_IP}"
+        - name: nfs-home
           mountPath: "/mnt/datastore/k3sdata/nextcloud"
         # extraEnv:
         #   - name: OIDC_CLIENT_ID
