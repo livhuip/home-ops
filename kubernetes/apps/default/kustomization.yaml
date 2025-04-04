@@ -12,3 +12,4 @@ resources:
   - ./searxng/ks.yaml
   - ./portainer/ks.yaml
   - ./it-tools/ks.yaml
+  - ./vaultwarden/ks.yaml

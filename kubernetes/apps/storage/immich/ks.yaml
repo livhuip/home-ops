@@ -28,11 +28,11 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  # dependsOn:
-  #   # - name: postgres-vector
-  #   #   namespace: database
-  #   # - name: dragonfly-cluster
-  #   #   namespace: database
+  dependsOn:
+    - name: crunchy-cluster-vector
+      namespace: database
+    - name: dragonfly-cluster
+      namespace: database
   interval: 30m
   path: "./kubernetes/apps/storage/immich/app"
   components:

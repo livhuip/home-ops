@@ -3,22 +3,22 @@ apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
   name: &name postgres-vector
-  labels:
-    crunchy-users.henrywhitaker3.github.com/watch: "true"
-  annotations:
-    crunchy-users.henrywhitaker3.github.com/superuser: "postgres"
-    crunchy-users.henrywhitaker3.github.com/extensions: |
-      [
-        {
-          "database": "immich_db",
-          "extension": "vectors"
-        },
-        {
-          "database": "immich_db",
-          "extension": "earthdistance",
-          "cascade": true
-        }
-      ]
+  # labels:
+  #   crunchy-users.henrywhitaker3.github.com/watch: "true"
+  # annotations:
+  #   crunchy-users.henrywhitaker3.github.com/superuser: "postgres"
+  #   crunchy-users.henrywhitaker3.github.com/extensions: |
+  #     [
+  #       {
+  #         "database": "immich_db",
+  #         "extension": "vectors"
+  #       },
+  #       {
+  #         "database": "immich_db",
+  #         "extension": "earthdistance",
+  #         "cascade": true
+  #       }
+  #     ]
 spec:
   postgresVersion: 16
   image: ghcr.io/drag0n141/cdpgvector:0.3.0@sha256:6bd40ba06b7da1885fbabb66b8b672fea865e6dce7f5c1a1195b4b97a75b43eb
@@ -84,14 +84,14 @@ spec:
         repo1-retention-diff: "30"
         repo1-path: "/crunchy-pgo-vector"
         repo1-s3-uri-style: path
-        repo1-s3-key: "${MINIO_KEY}"
-        repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
+        # repo1-s3-key: "${MINIO_KEY}"
+        # repo1-s3-key-secret: "${MINIO_SECRET_KEY}"
         repo2-bundle: "y"
         repo2-block: "y"
         repo2-path: "/crunchy-pgo-vector"
         repo2-s3-uri-style: "path"
-        repo2-s3-key: "${R2_KEY}"
-        repo2-s3-key-secret: "${R2_SECRET_KEY}"
+        # repo2-s3-key: "${R2_KEY}"
+        # repo2-s3-key-secret: "${R2_SECRET_KEY}"
         repo2-retention-full-type: "time"
         repo2-retention-full: "7"
         repo2-retention-diff: "14"
@@ -107,7 +107,7 @@ spec:
           name: repo1
           s3: &minio
             bucket: crunchy-pgo
-            endpoint: https://3.${SECRET_DOMAIN}
+            endpoint: https://s3.${SECRET_DOMAIN}
             region: us-east-1
           schedules:
             full: "0 1 * * 0" # Sunday at 1am
