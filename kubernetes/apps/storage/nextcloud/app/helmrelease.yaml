@@ -173,23 +173,23 @@ spec:
             server: "${NAS_IP}"
             path: "/mnt/datastore/k3sdata/nextcloud"
       extraVolumeMounts:
-        - name: nfs-home
+        - name: "${NAS_IP}"
           mountPath: "/mnt/datastore/k3sdata/nextcloud"
-      # extraEnv:
-      #   - name: OIDC_CLIENT_ID
-      #     valueFrom:
-      #       secretKeyRef:
-      #         name: &secret nextcloud-secret
-      #         key: OIDC_CLIENT_ID
-      #   - name: OIDC_CLIENT_SECRET
-      #     valueFrom:
-      #       secretKeyRef:
-      #         name: *secret
-      #         key: OIDC_CLIENT_SECRET
+        # extraEnv:
+        #   - name: OIDC_CLIENT_ID
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: &secret nextcloud-secret
+        #         key: OIDC_CLIENT_ID
+        #   - name: OIDC_CLIENT_SECRET
+        #     valueFrom:
+        #       secretKeyRef:
+        #         name: *secret
+        #         key: OIDC_CLIENT_SECRET
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: *secret
+              name: &secret nextcloud-secret
               key: REDIS_PASSWORD
       existingSecret:
         enabled: true
