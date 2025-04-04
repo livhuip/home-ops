@@ -186,11 +186,11 @@ spec:
         #       secretKeyRef:
         #         name: *secret
         #         key: OIDC_CLIENT_SECRET
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: &secret nextcloud-secret
-              key: REDIS_PASSWORD
+        # - name: REDIS_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: &secret nextcloud-secret
+        #       key: REDIS_PASSWORD
       existingSecret:
         enabled: true
         secretName: nextcloud-secret
