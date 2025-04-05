@@ -157,7 +157,7 @@ spec:
   targetNamespace: *namespace
   commonMetadata:
     labels:
-      app.kubernetes.io/name: *app
+      app.kubernetes.io/name: *appname
   dependsOn:
     - name: crunchy-postgres-operator
       namespace: *namespace
