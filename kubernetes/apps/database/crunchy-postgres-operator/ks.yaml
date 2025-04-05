@@ -151,7 +151,7 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app crunchy-vector-backup
+  name: &appname crunchy-vector-backup
   namespace: &namespace database
 spec:
   targetNamespace: *namespace
@@ -171,3 +171,9 @@ spec:
   interval: 1h
   retryInterval: 2m
   timeout: 5m
+  postBuild:
+    substitute:
+      APP: *appname
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
