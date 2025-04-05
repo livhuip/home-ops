@@ -70,7 +70,7 @@ spec:
             readOnly: true
       nas:
         type: nfs
-        server: nas01.${SECRET_DOMAIN_INT}
-        path: /mnt/data/backup
+        server: ${NASIP}
+        path: /mnt/datastore/kubebackup/postgres-vector/
         globalMounts:
           - path: /backups
