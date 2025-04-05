@@ -29,7 +29,8 @@ spec:
       APP: *app
       VOLSYNC_CLAIM: *app #pgadmin-config-v1
       VOLSYNC_CAPACITY: 200Mi
-      VOLSYNC_STORAGECLASS: cephfs
+      # VOLSYNC_STORAGECLASS: nfs-slow
+      # VOLSYNC_ACCESSMODES: ReadWriteOnce
       VOLSYNC_UID: "5050"
       VOLSYNC_GID: "5050"
     substituteFrom:
