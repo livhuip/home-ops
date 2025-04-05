@@ -28,7 +28,7 @@ spec:
     substitute:
       APP: *app
       VOLSYNC_CLAIM: *app #pgadmin-config-v1
-      VOLSYNC_CAPACITY: 100Mi
+      VOLSYNC_CAPACITY: 200Mi
       VOLSYNC_UID: "5050"
       VOLSYNC_GID: "5050"
     substituteFrom:
