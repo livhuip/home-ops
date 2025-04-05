@@ -71,6 +71,6 @@ spec:
       nas:
         type: nfs
         server: ${NAS_IP}
-        path: /mnt/datastore/kubebackup/postgres-vector/
+        path: /mnt/datastore/kubebackup/postgres-vector
         globalMounts:
           - path: /backups
