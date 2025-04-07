@@ -49,7 +49,7 @@ spec:
         containers:
           app:
             image:
-              repository: tensorchord/pgvecto.rs #ghcr.io/immich-app/immich-server
+              repository: ghcr.io/tensorchord/pgvecto-rs #ghcr.io/immich-app/immich-server
               tag: pg14-v0.2.0 #v1.131.3
               pullPolicy: IfNotPresent
 
