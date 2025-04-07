@@ -49,14 +49,14 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/tensorchord/pgvecto-rs #ghcr.io/immich-app/immich-server
-              tag: pg14-v0.2.0 #v1.131.3
+              repository: ghcr.io/immich-app/immich-server
+              tag: v1.131.3
               pullPolicy: IfNotPresent
 
             env:
               # Ports
               SERVER_PORT: &port 2283
-              POSTGRES_PASSWORD: krVlFrpFjF7rUhPoWDnILhWt
+              # POSTGRES_PASSWORD:
               # POSTGRES_HOST_AUTH_METHOD=trust
 
             envFrom: &envFrom
