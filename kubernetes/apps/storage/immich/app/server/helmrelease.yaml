@@ -16,10 +16,6 @@ spec:
         name: bjw-s
         namespace: flux-system
 
-  # dependsOn:
-  #   - name: dragonfly-operator
-  #     namespace: database
-
   maxHistory: 2
   install:
     createNamespace: true
@@ -53,8 +49,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/immich-app/immich-server
-              tag: v1.131.3
+              repository: ghcr.io/tensorchord/pgvecto.rs #ghcr.io/immich-app/immich-server
+              tag: pg15-v0.3.2 #v1.131.3
               pullPolicy: IfNotPresent
 
             env:
