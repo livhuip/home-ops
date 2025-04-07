@@ -51,7 +51,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app external-dns-pihole
-  namespace: default
+  namespace: network
 spec:
   interval: 30m
   chart:
