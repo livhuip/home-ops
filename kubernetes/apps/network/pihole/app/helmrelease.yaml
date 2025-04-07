@@ -23,7 +23,7 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    fullnameOverride: *app
+    fullnameOverride: #*app
     provider: pihole
     env:
       - name: &name EXTERNAL_DNS_PIHOLE_PASSWORD
