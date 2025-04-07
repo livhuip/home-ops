@@ -57,6 +57,7 @@ spec:
               # Ports
               SERVER_PORT: &port 2283
               POSTGRES_PASSWORD: ${DB_PASSWORD}
+              # POSTGRES_HOST_AUTH_METHOD=trust
 
             envFrom: &envFrom
               - configMapRef:
