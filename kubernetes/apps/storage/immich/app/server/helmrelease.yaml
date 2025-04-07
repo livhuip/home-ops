@@ -50,7 +50,7 @@ spec:
           app:
             image:
               repository: tensorchord/pgvecto.rs #ghcr.io/immich-app/immich-server
-              tag: pg14-v0.3.2 #v1.131.3
+              tag: pg14-v0.2.0 #v1.131.3
               pullPolicy: IfNotPresent
 
             env:
