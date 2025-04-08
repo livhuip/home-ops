@@ -76,6 +76,25 @@ nodes:
         mtu: 1500
         vip:
           ip: "10.0.10.100"
+  - hostname: "talos-cp-04"
+    ipAddress: "10.0.10.104"
+    installDisk: "/dev/nvme0n1"
+    machineSpec:
+      secureboot: false
+    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
+    controlPlane: true
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "c4:65:16:b5:08:51"
+        dhcp: false
+        addresses:
+          - "10.0.10.104/24"
+        routes:
+          - network: "0.0.0.0/0"
+            gateway: "10.0.10.1"
+        mtu: 1500
+        vip:
+          ip: "10.0.10.100"
 
 # Global patches
 patches:
@@ -90,4 +109,3 @@ controlPlane:
   patches:
     - "@./patches/controller/admission-controller-patch.yaml"
     - "@./patches/controller/cluster.yaml"
-
