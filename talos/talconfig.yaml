@@ -21,14 +21,14 @@ cniConfig:
 nodes:
   - hostname: "talos-cp-01"
     ipAddress: "10.0.10.101"
-    installDisk: "/dev/sda"
+    installDisk: "/dev/nvme0n1"
     machineSpec:
       secureboot: false
-    talosImageURL: factory.talos.dev/installer/dc7b152cb3ea99b821fcb7340ce7168313ce393d663740b791c36f6e95fc8586
+    talosImageURL: factory.talos.dev/installer/c9078f9419961640c712a8bf2bb9174933dfcf1da383fd8ea2b7dc21493f8bac
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "b2:b5:62:94:63:70"
+          hardwareAddr: "c4:65:16:b5:25:42"
         dhcp: false
         addresses:
           - "10.0.10.101/24"
