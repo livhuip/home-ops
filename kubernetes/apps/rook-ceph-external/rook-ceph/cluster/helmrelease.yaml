@@ -37,7 +37,7 @@ spec:
       crashCollector:
         disable: true
       cephVersion:
-        image: quay.io/ceph/ceph:v19.2.1
+        image: quay.io/ceph/ceph:v19.2.2
       healthCheck:
         daemonHealth:
           mon:
