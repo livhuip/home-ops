@@ -5,6 +5,4 @@ namespace: default
 resources:
   # []
   - ./helmrelease.yaml
-components:
-  # - ../../components/common
-  - ../../components/repos/app-template
+  # - ./persistentvolumeclaim.yaml
