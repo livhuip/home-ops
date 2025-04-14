@@ -1,12 +1,11 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app litellm
-  namespace: ai
+  name: litellm
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: app-template
@@ -15,60 +14,48 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-      interval: 15m
-  maxHistory: 3
   install:
     remediation:
-      retries: 5
+      retries: 3
   upgrade:
+    cleanupOnFail: true
     remediation:
-      retries: 5
-
+      strategy: rollback
+      retries: 3
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph-external
   values:
-    reasources:
-      requests:
-        cpu: 20m
-        memory: 128M
-      limits:
-        memory: 512M
     controllers:
       litellm:
-        replicas: 1
+        annotations:
+          reloader.stakater.com/auto: "true"
+          secret.reloader.stakater.com/reload: &secret litellm-secret
         initContainers:
           init-db:
             image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 17.4@sha256:a9f405688344a8a6f718e2c344438342ad21540986aeb5ab5fa781831eb2c597
-            envFrom:
+              repository: ghcr.io/onedr0p/postgres-init
+              tag: 16
+            envFrom: &envFrom
               - secretRef:
-                  name: litellm-postgres-secret
+                  name: *secret
         containers:
-          litellm:
+          app:
             image:
               repository: ghcr.io/berriai/litellm-non_root
-              tag: main-v1.60.0@sha256:d2c08fb25abed9cb612ae6d693d19cf77f7e73ac4719a3fb33b6fa292fc03760
-            ports:
-              - containerPort: &port 4000
+              tag: main-dev@sha256:b69b6e96dea337507d114ac748c750770cafcef69fb896034332bf1cf9a49b5e
             env:
-              TZ: "${TIMEZONE}"
-              REDIS_URL: redis://dragonfly.database.svc.cluster.local
-              STORE_MODEL_IN_DB: True
-            envFrom:
-              - secretRef:
-                  name: litellm-secret
+              TZ: ${TIMEZONE}
+              LITELLM_LOG: "DEBUG"
+              LITELLM_MODE: "DEV" # This disabled loading .env env vars
+              LITELLM_DONT_SHOW_FEEDBACK_BOX: "True"
+
+            envFrom: *envFrom
             args:
-              - "--config"
-              - "/app/config.yaml"
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 10m
-                memory: 200Mi
-              limits:
-                memory: 600Mi
+              - --port
+              - "4000"
+              - --config
+              - /app/config.yaml
             probes:
               liveness:
                 enabled: true
@@ -76,7 +63,7 @@ spec:
                 spec:
                   httpGet:
                     path: /health/liveliness
-                    port: *port
+                    port: &port 4000
                   initialDelaySeconds: 30
                   periodSeconds: 60
                   timeoutSeconds: 10
@@ -90,48 +77,69 @@ spec:
                     port: *port
                   initialDelaySeconds: 5
                   periodSeconds: 5
-                  timeoutSeconds: 3
+                  timeoutSeconds: 5
                   failureThreshold: 3
-    containerSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 150
-      runAsNonRoot: true
-      privileged: false
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: false
-      capabilities: { drop: ["ALL"] }
-      seccompProfile: { type: RuntimeDefault }
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 600Mi
+
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+
     service:
       app:
         controller: litellm
         ports:
           http:
+            primary: true
             port: *port
+
     ingress:
       app:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "internal.${SECRET_DOMAIN}"
         className: internal
         hosts:
-          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: litellm.${SECRET_DOMAIN}
             paths:
               - path: /
                 service:
                   identifier: app
                   port: http
-              - path: /ui
-                service:
-                  identifier: app
-                  port: http
-        tls:
-          - hosts:
-              - *host
-            secretName: ${SECRET_DOMAIN/./-}-tls
+
     persistence:
-      config-file:
+      config:
         type: configMap
         name: litellm-configmap
         globalMounts:
           - path: /app/config.yaml
             subPath: config.yaml
             readOnly: true
+
+      # key:
+      #   type: configMap
+      #   name: litellm-key
+      #   globalMounts:
+      #     - path: /usr/local/lib/python3.13/site-packages/litellm/proxy/auth/public_key.pem
+      #       subPath: public_key.pem
+      #       readOnly: true
+
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /.cache
+            subPath: cache
+          - path: /.npm
+            subPath: npm
+          - path: /tmp
+            subPath: tmp
