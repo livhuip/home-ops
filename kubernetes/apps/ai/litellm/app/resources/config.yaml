@@ -15,11 +15,11 @@ model_list:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
 
-  # # Anthropic
-  # - model_name: claude-3.5-sonnet
-  #   litellm_params:
-  #     model: anthropic/claude-3-5-sonnet-20241022
-  #     api_key: os.environ/ANTHROPIC_API_KEY
+  # Anthropic
+  - model_name: claude-3.5-sonnet
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20241022
+      api_key: os.environ/ANTHROPIC_API_KEY
 
   # # Together.ai
   # - model_name: deepseek-reasoner
