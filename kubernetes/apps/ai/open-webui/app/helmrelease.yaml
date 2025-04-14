@@ -37,7 +37,7 @@ spec:
             env:
               ENABLE_OLLAMA_API: "false"
               ENABLE_OPENAI_API: "true"
-              OPENAI_API_BASE_URLS: "https://api.openai.com/v1"
+              OPENAI_API_BASE_URLS: "http://litellm.ai.svc.cluster.local:4000/v1"
               ENV: "prod"
               WEBUI_NAME: "ai.${SECRET_DOMAIN}"
               WEBUI_URL: "https://ai.${SECRET_DOMAIN}"
