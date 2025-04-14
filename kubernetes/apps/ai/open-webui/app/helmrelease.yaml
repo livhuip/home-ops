@@ -40,7 +40,7 @@ spec:
               OPENAI_API_BASE_URLS: "https://api.openai.com/v1"
               ENV: "prod"
               WEBUI_NAME: "ai.${SECRET_DOMAIN}"
-              WEBUI_URL: "https://chat.${SECRET_DOMAIN}"
+              WEBUI_URL: "https://ai.${SECRET_DOMAIN}"
               ENABLE_SIGNUP: "true"
               ENABLE_LOGIN_FORM: "true"
             envFrom:
