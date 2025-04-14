@@ -39,8 +39,8 @@ spec:
               ENABLE_OPENAI_API: "true"
               OPENAI_API_BASE_URLS: "https://api.openai.com/v1"
               ENV: "prod"
-              WEBUI_NAME: "ai.${SECRET_DOMAIN)"
-              WEBUI_URL: "https://chat.${SECRET_DOMAIN)"
+              WEBUI_NAME: "ai.${SECRET_DOMAIN}"
+              WEBUI_URL: "https://chat.${SECRET_DOMAIN}"
               ENABLE_SIGNUP: "true"
               ENABLE_LOGIN_FORM: "true"
             envFrom:
@@ -81,7 +81,7 @@ spec:
         # annotations:
         #   external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
-          - host: &host ai.${SECRET_DOMAIN)
+          - host: &host ai.${SECRET_DOMAIN}
             paths:
               - path: /
                 service:
