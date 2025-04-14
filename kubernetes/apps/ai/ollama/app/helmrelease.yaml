@@ -1,0 +1,83 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app ollama
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: *app
+      version: 1.14.0
+      sourceRef:
+        kind: HelmRepository
+        name: *app
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    ollama:
+      gpu:
+        enabled: true
+        type: 'nvidia'
+      models:
+        pull: [llama3.2:3b,deepseek-r1:7b,deepseek-r1:1.5b]
+    extraEnv:
+      - name: NVIDIA_VISIBLE_DEVICES
+        value: all
+      - name: TZ
+        value: "${TIME_ZONE}"
+      - name: OLLAMA_DEBUG
+        value: "1"
+    ingress:
+      enabled: true
+      className: internal
+      annotations:
+        external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
+      hosts:
+        - host: "ollama.${SECRET_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+    persistentVolume:
+      enabled: true
+      existingClaim: *app
+    resources:
+      requests:
+        cpu: 200m
+        memory: 30Gi
+      limits:
+        memory: 80Gi
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: nvidia.feature.node.kubernetes.io/gpu
+                  operator: In
+                  values:
+                    - "true"
+    nodeSelector:
+      nvidia.feature.node.kubernetes.io/gpu: "true"
+    runtimeClassName: nvidia
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities: { drop: ["ALL"] }
+    securityContext:
+      runAsNonRoot: false
+      fsGroupChangePolicy: OnRootMismatch
+      seccompProfile: { type: RuntimeDefault }
+    volumes:
+      - emptyDir: {}
+        name: ollama-temp
+    volumeMounts:
+      - mountPath: /.ollama
+        name: ollama-temp
