@@ -139,7 +139,7 @@ spec:
               OPENAI_API_KEYS:
                 valueFrom:
                   secretKeyRef:
-                    name: openai
+                    name: openwebui-secret
                     key: OPENAI_API_KEY
             securityContext:
               allowPrivilegeEscalation: false
