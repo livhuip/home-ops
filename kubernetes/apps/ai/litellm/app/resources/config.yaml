@@ -10,6 +10,16 @@ model_list:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
 
+  - model_name: gpt-4.1
+    litellm_params:
+      model: openai/gpt-4.1
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: gpt-4.5
+    litellm_params:
+      model: openai/gpt-4.5
+      api_key: os.environ/OPENAI_API_KEY
+
   - model_name: gpt-4o-mini
     litellm_params:
       model: openai/gpt-4o-mini
@@ -26,6 +36,10 @@ model_list:
       model: anthropic/claude-3-5-sonnet-20241022
       api_key: os.environ/ANTHROPIC_API_KEY
 
+  - model_name: claude-3.7-sonnet
+    litellm_params:
+      model: anthropic/claude-3-7-sonnet-20250219
+      api_key: os.environ/ANTHROPIC_API_KEY
   # # Together.ai
   # - model_name: deepseek-reasoner
   #   litellm_params:
@@ -63,6 +77,11 @@ model_list:
   - model_name: gemini-2.0-pro
     litellm_params:
       model: gemini/gemini-2.0-pro-exp-02-05
+      api_key: os.environ/GOOGLE_AI_API_KEY
+
+  - model_name: gemini-2.5-pro-preview
+    litellm_params:
+      model: gemini/gemini-2.5-pro-preview-03-25
       api_key: os.environ/GOOGLE_AI_API_KEY
 
 general_settings:
