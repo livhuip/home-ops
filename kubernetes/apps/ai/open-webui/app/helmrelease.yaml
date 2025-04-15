@@ -140,7 +140,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: openwebui-secret
-                    key: OPENAI_API_KEY
+                    key: OPENAI_API_KEYS
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
