@@ -23,11 +23,11 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  dependsOn:
-    - name: rook-ceph-operator
-      namespace: rook-ceph-external
-    - name: volsync
-      namespace: storage
+  # dependsOn:
+  #   - name: rook-ceph-operator
+  #     namespace: rook-ceph-external
+  #   - name: volsync
+  #     namespace: storage
   values:
     image:
       repository: nextcloud
