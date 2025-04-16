@@ -37,5 +37,23 @@
       matchPackageNames: ["/external-dns/", "/gateway-api/", "/prometheus-operator/"],
       ignoreTests: true,
     },
+    {
+      description: "Auto-merge kube-prometheus-stack Helm chart",
+      matchDatasources: ["helm"],
+      matchPackageNames: ["kube-prometheus-stack"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      ignoreTests: false
+    },
+      {
+      description: "Auto-merge minor/patch Docker updates",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      ignoreTests: true
+    },
+
   ],
 }
