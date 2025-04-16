@@ -40,11 +40,11 @@
     {
       description: "Auto-merge kube-prometheus-stack Helm chart",
       matchDatasources: ["helm"],
-      matchPackageNames: ["kube-prometheus-stack","prometheus-node-exporter"],
+      matchPackageNames: ["kube-prometheus-stack","prometheus-node-exporter","grafana"],
       automerge: true,
       automergeType: "pr",
       matchUpdateTypes: ["minor", "patch"],
-      ignoreTests: false
+      ignoreTests: true
     },
     {
       description: "Auto-merge minor/patch Docker updates",
