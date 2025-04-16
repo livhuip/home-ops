@@ -40,7 +40,7 @@
     {
       description: "Auto-merge kube-prometheus-stack Helm chart",
       matchDatasources: ["helm"],
-      matchPackageNames: ["kube-prometheus-stack"],
+      matchPackageNames: ["kube-prometheus-stack","prometheus-node-exporter"],
       automerge: true,
       automergeType: "pr",
       matchUpdateTypes: ["minor", "patch"],
