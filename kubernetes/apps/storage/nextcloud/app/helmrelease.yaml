@@ -60,10 +60,10 @@ spec:
       #   enabled: true
       #   fromAddress: admin
       #   domain: ${SECRET_DOMAIN}
-      securityContext:
-        runAsUser: 1022
-        runAsGroup: 1022
-        runAsNonRoot: true
+      # securityContext:
+      #   runAsUser: 1022
+      #   runAsGroup: 1022
+      #   runAsNonRoot: true
       configs:
         proxy.config.php: |-
           <?php
