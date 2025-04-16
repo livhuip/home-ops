@@ -46,7 +46,7 @@
       matchUpdateTypes: ["minor", "patch"],
       ignoreTests: false
     },
-      {
+    {
       description: "Auto-merge minor/patch Docker updates",
       matchDatasources: ["docker"],
       automerge: true,
