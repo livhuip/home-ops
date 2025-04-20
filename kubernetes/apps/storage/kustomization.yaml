@@ -15,7 +15,3 @@ components:
   - ../../components/common
   - ../../components/repos/app-template
   # - ../../components/gatus/guarded
-  # - ../../../shared/meta/components/alerts
-  # - ../../../shared/meta/components/global-vars
-  # - ../../../shared/meta/components/namespace
-  # - ../../../shared/meta/components/sops
