@@ -7,7 +7,7 @@ metadata:
 spec:
   staticConfigs:
     - targets:
-        - gladius.hayani.internal:9100
+        - exegol.hayani.internal:9100
   metricsPath: /metrics
   relabelings:
     - action: replace
