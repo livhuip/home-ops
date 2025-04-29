@@ -40,14 +40,16 @@
     {
       description: "Auto-merge kube-prometheus-stack Helm chart",
       matchDatasources: ["helm"],
-      matchPackageNames: ["kube-prometheus-stack",
+      matchPackageNames: [
+        "kube-prometheus-stack",
         "prometheus-node-exporter",
         "grafana",
         "kube-state-metrics",
         "prometheus-operator-crds",
         "prometheus-smartctl-exporter",
         "pgadmin4",
-        "prometheus-blackbox-exporter"],
+        "prometheus-blackbox-exporter"
+        ],
       automerge: true,
       automergeType: "pr",
       matchUpdateTypes: ["minor", "patch"],
