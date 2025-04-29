@@ -29,6 +29,8 @@ spec:
     env:
       email: chrisadmin@hayani.xyz
     existingSecret: pgadmin-secrets
+    secretKeys:
+      pgadminPasswordKey: "PGADMIN_DEFAULT_PASSWORD"
     ingress:
       enabled: true
       ingressClassName: internal
