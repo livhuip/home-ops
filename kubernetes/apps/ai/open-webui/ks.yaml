@@ -28,6 +28,8 @@ spec:
       VOLSYNC_CAPACITY: 5Gi
       GATUS_SUBDOMAIN: ai
       GATUS_DOMAIN: ${SECRET_DOMAIN}
+      VOLSYNC_START_MINUTE: "11"
+      VOLSYNC_CACHE_CAPACITY: "1Gi"
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
