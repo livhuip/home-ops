@@ -1,9 +1,105 @@
+# ---
+# # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: &app openwebui
+# spec:
+#   interval: 30m
+#   chart:
+#     spec:
+#       chart: app-template
+#       version: 3.7.3
+#       sourceRef:
+#         kind: HelmRepository
+#         name: bjw-s
+#         namespace: flux-system
+#   install:
+#     remediation:
+#       retries: 3
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#   uninstall:
+#     keepHistory: false
+#   values:
+#     controllers:
+#       openwebui:
+#         type: deployment
+#         annotations:
+#           reloader.stakater.com/auto: "true"
+#         containers:
+#           app:
+#             image:
+#               repository: ghcr.io/open-webui/open-webui
+#               tag: v0.6.5 #0.6@sha256:fe7a6870ec6b2fd540c0f2007e6aa812dc4bf04a2d0a305bb344eeb10de0a7b7
+#             env:
+#               OLLAMA_BASE_URLS: "" #"http://10.0.10.23:11434"
+#               OPENAI_API_BASE_URLS: "http://litellm.ai.svc.cluster.local:4000/v1"
+#               RAG_WEB_SEARCH_ENGINE: searxng
+#               SEARXNG_QUERY_URL: http://searxng.default.svc.cluster.local:8080/search?q=<query>
+#               OPENAI_API_KEYS:
+#                 valueFrom:
+#                   secretKeyRef:
+#                     name: openwebui-secret
+#                     key: OPENAI_API_KEYS
+#             securityContext:
+#               allowPrivilegeEscalation: false
+#               capabilities: { drop: ["ALL"] }
+#             resources:
+#               requests:
+#                 cpu: 200m
+#               limits:
+#                 memory: 2048Mi
+#             probes:
+#               liveness:
+#                 enabled: true
+#               readiness:
+#                 enabled: true
+#               startup:
+#                 enabled: false
+#         # pod:
+#         #   securityContext:
+#         #     runAsUser: 568
+#         #     runAsGroup: 568
+#         #     runAsNonRoot: true
+#         #     fsGroup: 568
+#         #     fsGroupChangePolicy: OnRootMismatch
+#     service:
+#       app:
+#         controller: openwebui
+#         ports:
+#           http:
+#             port: 8080
+#     ingress:
+#       app:
+#         className: internal
+#         annotations:
+#           external-dns.alpha.kubernetes.io/target: "internal.${SECRET_DOMAIN}"
+#         hosts:
+#           - host: &host "ai.${SECRET_DOMAIN}"
+#             paths:
+#               - path: /
+#                 service:
+#                   identifier: app
+#                   port: http
+#         tls:
+#           - hosts:
+#               - *host
+#     persistence:
+#       config:
+#         enabled: true
+#         existingClaim: *app
+#         globalMounts:
+#           - path: /app/backend/data
+
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2beta2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app openwebui
+  name: &app open-webui
 spec:
   interval: 30m
   chart:
@@ -21,57 +117,58 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
+      strategy: rollback
   values:
     controllers:
-      openwebui:
-        type: deployment
+      open-webui:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/rafaribe/postgres-init
+              tag: 16
+            envFrom: &envFrom
+              - secretRef:
+                  name: openwebui
         containers:
           app:
             image:
               repository: ghcr.io/open-webui/open-webui
-              tag: v0.6.5 #0.6@sha256:fe7a6870ec6b2fd540c0f2007e6aa812dc4bf04a2d0a305bb344eeb10de0a7b7
+              tag: v0.6.5
             env:
-              OLLAMA_BASE_URLS: "" #"http://10.0.10.23:11434"
-              OPENAI_API_BASE_URLS: "http://litellm.ai.svc.cluster.local:4000/v1"
-              RAG_WEB_SEARCH_ENGINE: searxng
-              SEARXNG_QUERY_URL: http://searxng.default.svc.cluster.local:8080/search?q=<query>
-              OPENAI_API_KEYS:
-                valueFrom:
-                  secretKeyRef:
-                    name: openwebui-secret
-                    key: OPENAI_API_KEYS
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              # - name: OLLAMA_BASE_URL
+              #   value: http://192.168.2.37:11434
+              - name: ENABLE_RAG_WEB_SEARCH
+                value: true
+              - name: RAG_WEB_SEARCH_ENGINE
+                value: searxng
+              - name: SEARXNG_QUERY_URL
+                value: http://searxng.default.svc.cluster.local:8080/search?q=<query>
+            envFrom: *envFrom
             resources:
               requests:
-                cpu: 200m
+                cpu: 500m
+                memory: 2Gi
               limits:
-                memory: 2048Mi
-            probes:
-              liveness:
-                enabled: true
-              readiness:
-                enabled: true
-              startup:
-                enabled: false
-        # pod:
-        #   securityContext:
-        #     runAsUser: 568
-        #     runAsGroup: 568
-        #     runAsNonRoot: true
-        #     fsGroup: 568
-        #     fsGroupChangePolicy: OnRootMismatch
+                memory: 2Gi
+    defaultPodOptions:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
     service:
       app:
-        controller: openwebui
+        controller: open-webui
         ports:
           http:
-            port: 8080
+            port: &port 8080
+
     ingress:
       app:
         className: internal
@@ -87,6 +184,18 @@ spec:
         tls:
           - hosts:
               - *host
+    # route:
+    #   app:
+    #     hostnames: [ "chat.skylab.fi" ]
+    #     parentRefs:
+    #       - name: envoy-internal
+    #         namespace: networking
+    #         sectionName: https
+    #     rules:
+    #       - backendRefs:
+    #           - name: *app
+    #             port: *port
+
     persistence:
       config:
         enabled: true
