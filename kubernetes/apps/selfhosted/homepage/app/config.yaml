@@ -1,0 +1,286 @@
+---
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.18.1-standalone-strict/configmap-v1.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-config
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  settings.yaml: |
+    ---
+    title: dash
+    theme: dark
+    color: slate
+    useEqualHeights: true
+    layout: # key by group name in services.yaml
+      quick:
+      infra:
+      network:
+      dns:
+        style: row
+        columns: 4
+      backup:
+      power:
+      hardware:
+      observe:
+      dev:
+      data:
+      automation:
+      iot:
+      document:
+      apps:
+        style: row
+        columns: 4
+      media:
+      media-get:
+      media-process:
+      media-remote:
+
+    providers:
+      openweathermap: {{HOMEPAGE_VAR_PROV_OWM_API}}
+      weatherapi: {{HOMEPAGE_VAR_PROV_WAPI_API}}
+
+  widgets.yaml: |
+    ---
+    # - logo:
+    - kubernetes:
+        cluster:
+          show: false
+          cpu: false
+          memory: false
+          showLabel: false
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+
+    - search:
+        provider: duckduckgo
+        target: _blank
+
+    - unifi_console:
+        url: https://192.168.0.1
+        username: {{HOMEPAGE_VAR_WID_UBI_USER}}
+        password: {{HOMEPAGE_VAR_WID_UBI_PASS}}
+
+    - openweathermap:
+        label: Home #optional
+        latitude: {{HOMEPAGE_VAR_WID_HOUSE_LAT}}
+        longitude: {{HOMEPAGE_VAR_WID_HOUSE_LONG}}
+        units: imperial
+        provider: openweathermap
+        cache: 5 # Time in minutes to cache API responses, to stay within limits
+        format: # optional, Intl.NumberFormat options
+          maximumFractionDigits: 1
+
+  services.yaml: |
+    ---
+    - infra:
+        - proxmox:
+            icon: sh-proxmox.svg
+            href: {{HOMEPAGE_VAR_SVC_PROX_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_PROX_URL}}
+            widget:
+                type: proxmox
+                url: {{HOMEPAGE_VAR_SVC_PROX_URL}}
+                username: {{HOMEPAGE_VAR_SVC_PROX_USER}}
+                password: {{HOMEPAGE_VAR_SVC_PROX_PASS}}
+
+        - portainer-swarm:
+            icon: sh-portainer.svg
+            href: {{HOMEPAGE_VAR_SVC_PORT_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_PORT_URL}}
+            widget:
+                type: portainer
+                url: {{HOMEPAGE_VAR_SVC_PORT_URL}}
+                env: {{HOMEPAGE_VAR_SVC_PORT_ENV}}
+                key: {{HOMEPAGE_VAR_SVC_PORT_PASS}}
+
+    - network:
+        - unifi:
+            icon: ubiquiti
+            href: https://192.168.0.1
+            siteMonitor: https://192.168.0.1
+            widget:
+                type: unifi
+                url: https://192.168.0.1
+                username: {{HOMEPAGE_VAR_WID_UBI_USER}}
+                password: {{HOMEPAGE_VAR_WID_UBI_PASS}}
+
+        - traefik:
+            icon: traefik
+            href: {{HOMEPAGE_VAR_SVC_TRAEFIK_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_TRAEFIK_URL}}
+            widget:
+                type: traefik
+                url: {{HOMEPAGE_VAR_SVC_TRAEFIK_URL}}
+
+    - dns:
+        - adguard-a:
+            icon: sh-adguard-home.svg
+            href: {{HOMEPAGE_VAR_SVC_AGH_A_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_AGH_A_URL}}
+            widget:
+                type: adguard
+                url: {{HOMEPAGE_VAR_SVC_AGH_A_URL}}
+                username: {{HOMEPAGE_VAR_SVC_AGH_A_USER}}
+                password: {{HOMEPAGE_VAR_SVC_AGH_A_PASS}}
+
+        - adguard-b:
+            icon: sh-adguard-home.svg
+            href: {{HOMEPAGE_VAR_SVC_AGH_B_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_AGH_B_URL}}
+            widget:
+                type: adguard
+                url: {{HOMEPAGE_VAR_SVC_AGH_B_URL}}
+                username: {{HOMEPAGE_VAR_SVC_AGH_B_USER}}
+                password: {{HOMEPAGE_VAR_SVC_AGH_B_PASS}}
+
+
+        - adguard-sync:
+            icon: sh-adguard-home-light.svg
+            href: {{HOMEPAGE_VAR_SVC_AGSYNC_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_AGSYNC_URL}}
+            widget:
+                type: customapi
+                url: {{HOMEPAGE_VAR_SVC_AGSYNC_API_URL}}
+                method: GET
+                refreshInterval: 10000
+                mappings:
+                    - field:
+                        origin: status
+                      label: Get adguard-a config
+                    - field:
+                        replicas:
+                            '0': status
+                      format: text
+                      label: Replicate to adguard-b
+
+
+        - ns1-internal:
+            icon: sh-technitium.svg
+            href: {{HOMEPAGE_VAR_SVC_TNTM_1_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_TNTM_1_URL}}
+            widget:
+                type: technitium
+                url: {{HOMEPAGE_VAR_SVC_TNTM_1_URL}}
+                key: {{HOMEPAGE_VAR_SVC_TNTM_1_PASS}}
+                range: LastDay
+
+        - ns2-internal:
+            icon: sh-technitium.svg
+            href: {{HOMEPAGE_VAR_SVC_TNTM_2_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_TNTM_2_URL}}
+            widget:
+                type: technitium
+                url: {{HOMEPAGE_VAR_SVC_TNTM_2_URL}}
+                key: {{HOMEPAGE_VAR_SVC_TNTM_2_PASS}}
+                range: LastDay
+
+        - nextdns:
+            icon: sh-nextdns.svg
+            href: {{HOMEPAGE_VAR_SVC_NDNS_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_NDNS_URL}}
+            widget:
+                type: nextdns
+                profile: {{HOMEPAGE_VAR_SVC_NDNS_PROFILE}}
+                key: {{HOMEPAGE_VAR_SVC_NDNS_PASS}}
+
+    - observe:
+        - uptime-kuma:
+            icon: uptime-kuma
+            href: {{HOMEPAGE_VAR_SVC_UPKU_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_UPKU_URL}}
+            widget:
+                type: uptimekuma
+                url: {{HOMEPAGE_VAR_SVC_UPKU_URL}}
+                slug: {{HOMEPAGE_VAR_SVC_UPKU_SLUG}}
+
+    - backup:
+        - proxmox-backup:
+            icon: proxmox-light
+            href: {{HOMEPAGE_VAR_SVC_PBS_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_PBS_URL}}
+            widget:
+                type: proxmoxbackupserver
+                url: {{HOMEPAGE_VAR_SVC_PBS_URL}}
+                username: {{HOMEPAGE_VAR_SVC_PBS_USER}}
+                password: {{HOMEPAGE_VAR_SVC_PBS_PASS}}
+
+    - power:
+        - desk-ups:
+            icon: peanut
+            href: {{HOMEPAGE_VAR_SVC_PNUT_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_PNUT_URL}}
+            widget:
+                type: peanut
+                url: {{HOMEPAGE_VAR_SVC_PNUT_URL}}
+                key: {{HOMEPAGE_VAR_SVC_PNUT_KEY}}
+
+    - dev:
+        - gitea:
+            icon: gitea
+            href: {{HOMEPAGE_VAR_SVC_GITEA_HREF_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_GITEA_LOCAL_URL}}
+            widget:
+                type: gitea
+                url: {{HOMEPAGE_VAR_SVC_GITEA_LOCAL_URL}}
+                key: {{HOMEPAGE_VAR_SVC_GITEA_PASS}}
+
+    - document:
+        - paperless:
+            icon: paperless-ngx
+            href: {{HOMEPAGE_VAR_SVC_PPRL_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_PPRL_URL}}
+            widget:
+                type: paperlessngx
+                url: {{HOMEPAGE_VAR_SVC_PPRL_URL}}
+                key: {{HOMEPAGE_VAR_SVC_PPRL_PASS}}
+
+        - netbox:
+            icon: sh-netbox.svg
+            href: {{HOMEPAGE_VAR_SVC_NETBOX_EXT_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_NETBOX_URL}}
+            widget:
+                type: glances
+                url: {{HOMEPAGE_VAR_SVC_NETBOX_GLANCE_URL}}
+                version: 4
+                metric: memory
+
+    - apps:
+        - cups:
+            icon: sh-cups.svg
+            href: {{HOMEPAGE_VAR_SVC_CUPS_URL}}
+            siteMonitor: {{HOMEPAGE_VAR_SVC_CUPS_URL}}
+
+  bookmarks.yaml: |
+    ---
+    - quick:
+      - todoist:
+        - abbr: TODO
+          href: https://app.todoist.com/app/today#
+          description: todo
+          icon: todoist.svg
+
+    - dev:
+      - HomepageDocs:
+        - abbr: HD
+          href: https://gethomepage.dev/configs/
+      - ProxmoxHelperScripts:
+        - abbr: PHS
+          href: https://community-scripts.github.io/ProxmoxVE/
+      - kubesearch:
+        - abbr: KS
+          href: https://kubesearch.dev/
+
+  docker.yaml: |
+    ---
+
+  kubernetes.yaml: |
+    ---
+    mode: cluster
+    ingress: true
+    gateway: true

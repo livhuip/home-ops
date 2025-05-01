@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app minecraft-router
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: mc-router
+      version: 1.3.0
+      sourceRef:
+        kind: HelmRepository
+        name: minecraft-server
+        namespace: flux-system
+      interval: 5m
+  install:
+    timeout: 10m
+    replace: true
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 3
+      strategy: rollback
+    cleanupOnFail: true
+    crds: CreateReplace
+  test:
+    enable: true
+  rollback:
+    recreate: true
+    force: true
+    cleanupOnFail: true
+  uninstall:
+    keepHistory: false
+  driftDetection:
+    mode: enabled
+  maxHistory: 3
+  values:
+    fullnameOverride: *app
+    services:
+      # Service for Minecraft client connections
+      minecraft:
+        type: LoadBalancer
+        port: 19132
+        annotations:
+          lbipam.cilium.io/ips: ${CILIUM_SVC_MINECRAFT_ROUTER_ADDR}
+
+    minecraftRouter:
+      debug:
+        enabled: true
+
+      # Default Minecraft server to use when mapping not found
+      defaultServer:
+        host: "minecraft.selfhosted.svc.cluster.local"
+        port: 19132
+
+      mappings:
+        - externalHostname: "bedrock.${SECRET_DOMAIN}"
+          host: "minecraft.selfhosted.svc.cluster.local"
+          port: 19132

@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app gramps
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  maxHistory: 2
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      gramps:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          enableServiceLinks: false
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: *app
+        containers:
+          app:
+            image: &image
+              repository: ghcr.io/gramps-project/grampsweb
+              tag: v25.4.1
+            envFrom:
+              - secretRef:
+                  name: gramps-secret
+            env: &envs
+              GRAMPSWEB_TREE: "benwal" # will create a new tree if not exists
+              GRAMPSWEB_BASE_URL: "https://gramps.${SECRET_DOMAIN}"
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+          worker:
+            image: *image
+            command:
+              [
+                "celery",
+                "-A",
+                "gramps_webapi.celery",
+                "worker",
+                "--loglevel=INFO",
+              ]
+            envFrom:
+              - secretRef:
+                  name: gramps-secret
+            env: *envs
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 4Gi
+    service:
+      app:
+        controller: gramps
+        ports:
+          http:
+            port: 5000
+    ingress:
+      app:
+        className: internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: Genealogy
+          gethomepage.dev/group: apps
+          gethomepage.dev/icon: sh-gramps.svg
+          gethomepage.dev/name: Gramps
+        hosts:
+          - host: &host "gramps.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        existingClaim: *app
+        advancedMounts:
+          gramps:
+            app:
+              - path: "/app/users"
+                subPath: "app/users"
+              - path: "/app/cache"
+                subPath: "app/cache"
+              - path: "/app/indexdir"
+                subPath: "app/indexdir"
+              - path: "/app/thumbnail_cache"
+                subPath: "app/thumbnail_cache"
+              - path: "/app/secret"
+                subPath: "app/secret"
+              - path: "/root/.gramps/grampsdb"
+                subPath: "root/.gramps/grampsdb"
+              - path: "/app/media"
+                subPath: "app/media"
+            worker:
+              - path: "/app/users"
+                subPath: "app/users"
+              - path: "/app/cache"
+                subPath: "app/cache"
+              - path: "/app/indexdir"
+                subPath: "app/indexdir"
+              - path: "/app/thumbnail_cache"
+                subPath: "app/thumbnail_cache"
+              - path: "/app/secret"
+                subPath: "app/secret"
+              - path: "/root/.gramps/grampsdb"
+                subPath: "root/.gramps/grampsdb"
+              - path: "/app/media"
+                subPath: "app/media"
+
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

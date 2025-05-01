@@ -1,0 +1,43 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app nextcloud
+  namespace: &namespace selfhosted
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: crunchy-postgres-cluster
+      namespace: storage
+    - name: dragonfly-cluster
+      namespace: storage
+    - name: onepassword-store
+      namespace: security
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: csi-driver-nfs
+      namespace: storage
+    - name: volsync
+      namespace: storage
+  interval: 30m
+  path: ./kubernetes/apps/selfhosted/nextcloud/app
+  components:
+    - ../../../../components/volsync
+  postBuild:
+    substitute:
+      APP: *app
+      # APP_UID: "1003"
+      # APP_GID: "100"
+      VOLSYNC_CAPACITY: 5Gi
+      VOLSYNC_CACHE_CAPACITY: 5Gi
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: *namespace
+  timeout: 5m
+  wait: false

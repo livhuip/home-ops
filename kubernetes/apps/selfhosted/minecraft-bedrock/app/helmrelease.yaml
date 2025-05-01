@@ -1,0 +1,88 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app minecraft-bedrock
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: minecraft-bedrock
+      version: 2.8.4
+      sourceRef:
+        kind: HelmRepository
+        name: minecraft-server
+        namespace: flux-system
+      interval: 5m
+  install:
+    timeout: 10m
+    replace: true
+    crds: CreateReplace
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      remediateLastFailure: true
+      retries: 3
+      strategy: rollback
+    cleanupOnFail: true
+    crds: CreateReplace
+  test:
+    enable: true
+  rollback:
+    recreate: true
+    force: true
+    cleanupOnFail: true
+  uninstall:
+    keepHistory: false
+  driftDetection:
+    mode: enabled
+  maxHistory: 3
+  values:
+    image:
+      repository: itzg/minecraft-bedrock-server
+      tag: latest
+      pullPolicy: IfNotPresent
+    fullnameOverride: *app
+    extraEnv:
+      TZ: ${TIMEZONE}
+    serviceAnnotations:
+      lbipam.cilium.io/ips: ${CILIUM_SVC_MINECRAFT_BEDROCK_ADDR}
+    minecraftServer:
+      serverName: Bedrock Minecraft Server
+      levelName: World
+      serverPort: 8080
+      eula: "TRUE"
+      version: LATEST
+      difficulty: peaceful
+      maxPlayers: 10
+      gameMode: survival
+      playerIdleTimeout: 10
+      cheats: true
+      enableLanVisibility: true
+      defaultPermission: operator
+      # TODO: Consider disabling if Microsoft login failure occurs;
+      # Check accounts against Minecraft account service.
+      onlineMode: false
+      serviceType: LoadBalancer
+      extraPorts:
+        - name: bedrock
+          containerPort: 8080
+          protocol: TCP
+          service:
+            enabled: true
+            embedded: false
+            type: ClusterIP
+            port: 8080
+          ingress:
+            ingressClassName: internal
+            enabled: true
+            hosts:
+              - name: &host bedrock.${SECRET_DOMAIN}
+                path: /
+    persistence:
+      dataDir:
+        enabled: true
+        existingClaim: *app

@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app miniflux
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  maxHistory: 2
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      miniflux:
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups:
+              - 65541
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: *app
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/miniflux/miniflux
+              tag: 2.2.8
+
+            env:
+              BASE_URL: https://rss.${SECRET_DOMAIN}
+              PORT: &port 8080
+
+              OAUTH2_PROVIDER: oidc
+              OAUTH2_USER_CREATION: "1"
+              OAUTH2_REDIRECT_URL: https://rss.${SECRET_DOMAIN}/oauth2/oidc/callback
+              OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://sso.${SECRET_DOMAIN}/application/o/miniflux/
+
+              CREATE_ADMIN: "1"
+              DEBUG: "1"
+              LOG_DATE_TIME: "1"
+              POLLING_SCHEDULER: entry_frequency
+              POLLING_FREQUENCY: "15"
+              RUN_MIGRATIONS: "1"
+
+              METRICS_COLLECTOR: "1"
+              METRICS_ALLOWED_NETWORKS: 10.69.0.0/16
+
+            envFrom:
+              - secretRef:
+                  name: miniflux-secret
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 400Mi
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthcheck
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+    service:
+      app:
+        controller: miniflux
+        ports:
+          http:
+            port: *port
+
+    ingress:
+      app:
+        className: internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: RSS Reader
+          gethomepage.dev/group: apps
+          gethomepage.dev/icon: sh-miniflux.svg
+          gethomepage.dev/name: miniflux
+          gethomepage.dev/widget.type: miniflux
+          gethomepage.dev/widget.url: http://miniflux.selfhosted:8080
+          gethomepage.dev/widget.key: "{{ `{{HOMEPAGE_VAR_SVC_MNFX_TOKEN}}` }}"
+        hosts:
+          - host: &host "rss.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+      tailscale:
+        className: tailscale
+        hosts:
+          - host: &tshost "rss.${SECRET_TS_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - *tshost
