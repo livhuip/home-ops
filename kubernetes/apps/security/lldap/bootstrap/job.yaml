@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: lldap-bootstrap
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: lldap-bootstrap
+          image: lldap/lldap:v0.6.1
+
+          command:
+            - /bootstrap/bootstrap.sh
+
+          envFrom:
+            - secretRef:
+                name: lldap-bootstrap-secret
+
+          env:
+            - name: DO_CLEANUP
+              value: "true"
+
+          volumeMounts:
+            - name: bootstrap
+              mountPath: /bootstrap/bootstrap.sh
+              readOnly: true
+              subPath: bootstrap.sh
+
+            - name: user-configs
+              mountPath: /bootstrap/user-configs
+              readOnly: true
+
+            - name: group-configs
+              mountPath: /bootstrap/group-configs
+              readOnly: true
+
+      volumes:
+        - name: bootstrap
+          configMap:
+            name: lldap-bootstrap-config
+            defaultMode: 0555
+            items:
+              - key: bootstrap.sh
+                path: bootstrap.sh
+
+        - name: user-configs
+          projected:
+            sources:
+              - secret:
+                  name: lldap-config-secret
+                  items:
+                    - key: searchuser.json
+                      path: searchuser-configs.json
+                    - key: user0.json
+                      path: user0-configs.json
+
+        - name: group-configs
+          projected:
+            sources:
+              - secret:
+                  name: lldap-config-secret
+                  items:
+                    - key: group0.json
+                      path: group0-config.json
+                    - key: group1.json
+                      path: group1-config.json

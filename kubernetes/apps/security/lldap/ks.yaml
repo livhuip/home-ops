@@ -1,0 +1,61 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app lldap
+  namespace: &namespace security
+spec:
+  targetNamespace: *namespace
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  path: ./kubernetes/apps/security/lldap/app
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  dependsOn:
+    - name: crunchy-postgres-cluster
+      namespace: storage
+    - name: onepassword-store
+      namespace: security
+  components:
+    - ../../../../components/gatus/guarded
+  postBuild:
+    substitute:
+      APP: lldap
+      GATUS_APP: lldap
+      GATUS_SUBDOMAIN: lldap
+  prune: true
+  wait: false
+  interval: 30m
+  timeout: 5m
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app lldap-bootstrap
+  namespace: &namespace security
+spec:
+  targetNamespace: *namespace
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  path: ./kubernetes/apps/security/lldap/bootstrap
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  dependsOn:
+    - name: lldap
+      namespace: security
+  postBuild:
+    substitute:
+      APP: lldap
+  prune: true
+  wait: true
+  force: true
+  interval: 30m
+  timeout: 5m
