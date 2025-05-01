@@ -57,25 +57,26 @@ spec:
       databases:
         - postgres
       options: "SUPERUSER"
-      password: &password
+      password: #&password
         type: AlphaNumeric
     # Applications
-    - name: "n8n"
-      databases:
-        - n8n
-      password: *password
-    - name: "nextcloud"
-      databases:
-        - nextcloud
-      password: *password
+    # - name: "n8n"
+    #   databases:
+    #     - n8n
+    #   password: *password
+    # - name: "nextcloud"
+    #   databases:
+    #     - nextcloud
+    #   password: *password
     - name: "authentik"
       databases:
         - authentik
-      password: *password
-    - name: "paperless"
-      databases:
-        - paperless
-      password: *password
+      password: #*password
+        type: AlphaNumeric
+    # - name: "paperless"
+    #   databases:
+    #     - paperless
+    #   password: *password
     # - name: "gatus"
     #   databases: ["gatus"]
     #   password:
