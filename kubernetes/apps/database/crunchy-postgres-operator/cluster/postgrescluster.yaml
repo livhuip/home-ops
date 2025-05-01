@@ -55,7 +55,7 @@ spec:
   users:
     - name: *superuser #"postgres"
       databases:
-        - "postgres"
+        - postgres
       options: "SUPERUSER"
       password: &password
         type: AlphaNumeric
