@@ -9,7 +9,7 @@ spec:
   metadata:
     labels:
       crunchy-userinit.ramblurr.github.com/enabled: "true"
-      crunchy-userinit.ramblurr.github.com/superuser: "postgres"
+      crunchy-userinit.ramblurr.github.com/superuser: &superuser "postgres"
 
   service:
     type: LoadBalancer
@@ -53,7 +53,7 @@ spec:
               postgres-operator.crunchydata.com/data: postgres
 
   users:
-    - name: "postgres"
+    - name: *superuser #"postgres"
       databases:
         - "postgres"
       options: "SUPERUSER"
