@@ -57,13 +57,13 @@ spec:
       databases:
         - postgres
       options: "SUPERUSER"
-      password: #&password
+      password: &password
         type: AlphaNumeric
     # Applications
-    # - name: "n8n"
-    #   databases:
-    #     - n8n
-    #   password: *password
+    - name: "n8n"
+      databases:
+        - n8n
+      password: *password
     # - name: "nextcloud"
     #   databases:
     #     - nextcloud
