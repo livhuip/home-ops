@@ -33,7 +33,7 @@ spec:
             name: *secret
     authentik:
       redis:
-        host: dragonfly.databse.svc.cluster.local
+        host: dragonfly.database.svc.cluster.local
     server:
       autoscaling:
         enabled: true
