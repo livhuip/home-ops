@@ -34,3 +34,4 @@ resources:
   - ./runix.yaml
   - ./cloudnative-pg.yaml
   - ./kubernetes-dashboard.yaml
+  - ./authentik.yaml
