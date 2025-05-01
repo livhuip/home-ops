@@ -28,6 +28,9 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: sso
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   wait: false
   interval: 30m
