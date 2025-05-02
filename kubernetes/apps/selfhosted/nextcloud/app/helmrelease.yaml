@@ -73,7 +73,7 @@ spec:
       pathType: Prefix
 
     nextcloud:
-      host: &host nextcloud.${SECRET_DOMAIN}
+      host: &host cloud.${SECRET_DOMAIN}
 
       # securityContext:
       #   runAsUser: &uid 1003
