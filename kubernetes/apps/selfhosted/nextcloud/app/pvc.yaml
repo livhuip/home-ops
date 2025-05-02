@@ -1,15 +1,44 @@
+# ---
+# # yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/persistentvolumeclaim-v1.json
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: nextcloud-data
+#   labels:
+#     app.kubernetes.io/name: nextcloud
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 60Gi
+#   storageClassName: nfs-csi
+
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/persistentvolumeclaim-v1.json
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nextcloud-data
+spec:
+  storageClassName: nextcloud-data
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadWriteMany"]
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: ${NAS_IP}
+    path: /mnt/datastore/nextcloud
+  # Note: The first two options are strictly for NFSv4.2
+  mountOptions: ["nfsvers=4.2", "nconnect=8", "hard", "noatime"]
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nextcloud-data
-  labels:
-    app.kubernetes.io/name: nextcloud
+  namespace: selfhosted
 spec:
-  accessModes:
-    - ReadWriteMany
+  accessModes: ["ReadWriteMany"]
+  storageClassName: nextcloud-data
   resources:
     requests:
-      storage: 60Gi
-  storageClassName: nfs-csi
+      storage: 1Mi
