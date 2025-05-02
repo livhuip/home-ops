@@ -39,7 +39,8 @@ spec:
         # gethomepage.dev/widget.type: nextcloud
         # gethomepage.dev/widget.url: https://nextcloud.${SECRET_DOMAIN}
         # gethomepage.dev/widget.key: "{{ `{{HOMEPAGE_VAR_SVC_NXC_TOKEN}}` }}"
-        nginx.ingress.kubernetes.io/proxy-body-size: 512M
+        external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+        nginx.ingress.kubernetes.io/proxy-body-size: "10G"
         nginx.ingress.kubernetes.io/proxy-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
         nginx.ingress.kubernetes.io/enable-cors: "true"
