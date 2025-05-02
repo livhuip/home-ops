@@ -202,8 +202,8 @@ spec:
             'trusted_domains' =>
               [
                 'nextcloud',
-                'nextcloud.selfhosted',
-                'nextcloud.${SECRET_DOMAIN}'
+                'cloud.selfhosted',
+                'cloud.${SECRET_DOMAIN}'
               ],
             'forwarded_for_headers' =>
             array (
