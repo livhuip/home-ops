@@ -103,11 +103,11 @@ spec:
             secretKeyRef:
               name: *secret
               key: REDIS_PORT
-        # - name: REDIS_DB
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: *secret
-        #       key: REDIS_DB
+        - name: REDIS_DB
+          valueFrom:
+            secretKeyRef:
+              name: *secret
+              key: REDIS_DB
         - name: S3_BUCKET
           valueFrom:
             secretKeyRef:
