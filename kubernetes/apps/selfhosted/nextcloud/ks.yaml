@@ -10,14 +10,14 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: crunchy-postgres-cluster
-      namespace: storage
+    - name: crunchy-postgres-operator-cluster
+      namespace: database
     - name: dragonfly-cluster
-      namespace: storage
+      namespace: database
     - name: onepassword-store
-      namespace: security
+      namespace: external-secrets
     - name: rook-ceph-cluster
-      namespace: rook-ceph
+      namespace: rook-ceph-external
     - name: csi-driver-nfs
       namespace: storage
     - name: volsync
