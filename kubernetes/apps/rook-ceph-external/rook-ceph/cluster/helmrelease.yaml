@@ -110,11 +110,11 @@ spec:
     #     fsName: cephfs
     # # # -- A list of CephBlockPool configurations to deploy
     # # # @default -- See [below](#ceph-block-pools)
-    # cephBlockPools: {}
+    cephBlockPools: {}
 
-    # # # -- A list of CephFileSystem configurations to deploy
-    # # # @default -- See [below](#ceph-file-systems)
-    # cephFileSystems: {}
+    # # -- A list of CephFileSystem configurations to deploy
+    # # @default -- See [below](#ceph-file-systems)
+    cephFileSystems: {}
 
     # # # -- A list of CephObjectStore configurations to deploy
     # # # @default -- See [below](#ceph-object-stores)
