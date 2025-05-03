@@ -99,25 +99,25 @@ spec:
     #   isDefault: false
     #   deletionPolicy: Delete
 
-    cephFileSystemVolumeSnapshotClass:
-      enabled: true
-      name: cephfs-snapshot
-      isDefault: false
-      deletionPolicy: Delete
-      # see https://rook.io/docs/rook/v1.10/Storage-Configuration/Ceph-CSI/ceph-csi-snapshot/#cephfs-snapshots for available configuration
-      parameters:
-        pool: cephfs_data
-        fsName: cephfs
-    # # -- A list of CephBlockPool configurations to deploy
-    # # @default -- See [below](#ceph-block-pools)
-    cephBlockPools: {}
+    # cephFileSystemVolumeSnapshotClass:
+    #   enabled: true
+    #   name: cephfs-snapshot
+    #   isDefault: false
+    #   deletionPolicy: Delete
+    #   # see https://rook.io/docs/rook/v1.10/Storage-Configuration/Ceph-CSI/ceph-csi-snapshot/#cephfs-snapshots for available configuration
+    #   parameters:
+    #     pool: cephfs_data
+    #     fsName: cephfs
+    # # # -- A list of CephBlockPool configurations to deploy
+    # # # @default -- See [below](#ceph-block-pools)
+    # cephBlockPools: {}
 
-    # # -- A list of CephFileSystem configurations to deploy
-    # # @default -- See [below](#ceph-file-systems)
-    cephFileSystems: {}
+    # # # -- A list of CephFileSystem configurations to deploy
+    # # # @default -- See [below](#ceph-file-systems)
+    # cephFileSystems: {}
 
-    # # -- A list of CephObjectStore configurations to deploy
-    # # @default -- See [below](#ceph-object-stores)
+    # # # -- A list of CephObjectStore configurations to deploy
+    # # # @default -- See [below](#ceph-object-stores)
     cephObjectStores:
       - name: ceph-objectstore
         spec:
