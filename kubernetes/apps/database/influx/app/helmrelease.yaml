@@ -73,7 +73,7 @@ spec:
           http:
             enabled: false
             port: 8080
-          influx:
+          influxdb:
             enabled: true
             port: 8086
     ingress:
