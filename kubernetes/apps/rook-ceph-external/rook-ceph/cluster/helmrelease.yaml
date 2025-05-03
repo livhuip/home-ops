@@ -57,7 +57,6 @@ spec:
       externalMgrEndpoints:
         - ip: 192.168.86.15
         - ip: 192.168.86.13
-        - ip: 192.168.86.8
         - ip: 192.168.86.12
       interval: 15s
 
