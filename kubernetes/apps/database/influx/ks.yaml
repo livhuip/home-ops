@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app influx
+  name: &app influxdb
   namespace: flux-system
 spec:
   targetNamespace: database
@@ -11,13 +11,18 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   path: ./kubernetes/apps/database/influx/app
+  components:
+    - ../../../../components/volsync
   prune: true
   sourceRef:
     kind: GitRepository
-    name: home-ops-kubernetes
+    name: flux-system
+    namespace: flux-system
   dependsOn:
-    - name: external-secrets-stores
+    - name: onepassword-store
+      namespace: external-secrets
     - name: volsync
+      namespace: storage
   wait: true
   interval: 30m
   retryInterval: 1m
@@ -26,3 +31,6 @@ spec:
     substitute:
       APP: *app
       VOLSYNC_CAPACITY: 10Gi
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
