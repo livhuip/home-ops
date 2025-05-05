@@ -76,12 +76,12 @@ spec:
     nextcloud:
       host: &host cloud.${SECRET_DOMAIN}
 
-      # podSecurityContext:
-      #   fsGroup: 33
-      # securityContext:
-      #   runAsUser: &uid 1000
-      #   runAsGroup: &gid 1000
-      #   runAsNonRoot: true
+      podSecurityContext:
+        fsGroup: 33
+      securityContext:
+        runAsUser: &uid 1000
+        runAsGroup: &gid 1000
+        runAsNonRoot: true
 
       existingSecret:
         enabled: true
@@ -186,6 +186,22 @@ spec:
                 secretKeyRef:
                   name: *secret
                   key: REDIS_PORT
+
+        - name: fix-permissions
+          image: alpine:3.21.3
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+          args:
+            - -c
+            - >-
+              chmod -R 0770 /var/www/data &&
+              chown -R www-data:www-data /var/www/data
+          securityContext:
+            runAsUser: 0 # Run as root to change permissions
+          volumeMounts:
+            - mountPath: /var/www/data
+              name: nextcloud-data
 
       defaultConfigs:
         redis.config.php: false
