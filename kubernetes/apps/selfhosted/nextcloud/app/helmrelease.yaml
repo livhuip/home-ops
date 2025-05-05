@@ -383,10 +383,10 @@ spec:
 
     resources:
       requests:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 400m
+        memory: 512Mi
       limits:
-        memory: 4Gi
+        memory: 8Gi
 
     startupProbe:
       enabled: true
