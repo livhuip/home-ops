@@ -81,7 +81,7 @@ spec:
       securityContext:
         runAsUser: &uid 33
         runAsGroup: &gid 33
-        runAsNonRoot: true
+        runAsNonRoot: false
 
       existingSecret:
         enabled: true
