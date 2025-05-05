@@ -315,14 +315,29 @@ spec:
         post-installation: |-
           printf "Add missing DB indices\n"
           php occ db:add-missing-indices
+        # before-starting: |-
+        #   # disable unneceserry apps
+        #   for appname in activity circles systemtags federation privacy \
+        #       nextcloud_announcements announcementcenter support survey_client \
+        #       user_status weather_status dashboard
+        #     do
+        #     php occ app:disable "$appname"
+        #   done
         before-starting: |-
-          # disable unneceserry apps
-          for appname in activity circles systemtags federation privacy \
-              nextcloud_announcements announcementcenter support survey_client \
-              user_status weather_status dashboard
-            do
-            php occ app:disable "$appname"
-          done
+          # Check if Nextcloud is installed before disabling apps
+          if php occ status | grep -q "installed: true"; then
+            # disable unnecessary apps
+            for appname in activity circles systemtags federation privacy \
+                nextcloud_announcements announcementcenter support survey_client \
+                user_status weather_status dashboard
+              do
+              php occ app:disable "$appname"
+            done
+          else
+            echo "Nextcloud is not yet installed. Skipping app disabling."
+            exit 0
+          fi
+
         post-upgrade: |-
           # based on https://github.com/nextcloud/all-in-one/blob/25c580bca370eaead5f1fad9d3842a9c49562dff/Containers/nextcloud/entrypoint.sh#L451-L457
           php occ maintenance:repair --include-expensive
