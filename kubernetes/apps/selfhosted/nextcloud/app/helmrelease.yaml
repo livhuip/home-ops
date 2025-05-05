@@ -76,12 +76,12 @@ spec:
     nextcloud:
       host: &host cloud.${SECRET_DOMAIN}
 
-      podSecurityContext:
-        fsGroup: 33
-      securityContext:
-        runAsUser: &uid 33
-        runAsGroup: &gid 33
-        runAsNonRoot: true
+      # podSecurityContext:
+      #   fsGroup: 33
+      # securityContext:
+      #   runAsUser: &uid 33
+      #   runAsGroup: &gid 33
+      #   runAsNonRoot: true
 
       existingSecret:
         enabled: true
@@ -187,21 +187,21 @@ spec:
                   name: *secret
                   key: REDIS_PORT
 
-        - name: fix-permissions
-          image: busybox:latest
-          imagePullPolicy: IfNotPresent
-          securityContext:
-            runAsUser: 0 # Run as root to have permission to change ownership
-          command:
-            - sh
-          args:
-            - -c
-            - >-
-              chmod -R 0770 /var/www/data &&
-              chown -R 33:33 /var/www/data
-          volumeMounts:
-            - mountPath: /var/www/data
-              name: nextcloud-data
+        # - name: fix-permissions
+        #   image: busybox:latest
+        #   imagePullPolicy: IfNotPresent
+        #   securityContext:
+        #     runAsUser: 0 # Run as root to have permission to change ownership
+        #   command:
+        #     - sh
+        #   args:
+        #     - -c
+        #     - >-
+        #       chmod -R 0770 /var/www/data &&
+        #       chown -R 33:33 /var/www/data
+        #   volumeMounts:
+        #     - mountPath: /var/www/data
+        #       name: nextcloud-data
 
       defaultConfigs:
         redis.config.php: false
