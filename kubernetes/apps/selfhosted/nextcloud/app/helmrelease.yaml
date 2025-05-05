@@ -138,7 +138,7 @@ spec:
       mail:
         enabled: true
         fromAddress: nextcloud
-        domain: "${SECRET_PRO_DOMAIN}"
+        domain: "${SECRET_DOMAIN}"
         smtp:
           secure: ssl
           port: 465
@@ -297,6 +297,36 @@ spec:
         #   pm.max_spare_servers = 42
         #   pm.max_requests = 500
         #   pm.process_idle_timeout = 10s
+        www.conf: |
+          [www]
+          user = www-data
+          group = www-data
+          listen = 127.0.0.1:9000
+          pm = dynamic
+          pm.max_children = 57
+          pm.start_servers = 14
+          pm.min_spare_servers = 14
+          pm.max_spare_servers = 42
+          pm.max_requests = 500
+          pm.process_idle_timeout = 10s
+      hooks:
+        post-installation: |-
+          printf "Add missing DB indices\n"
+          php occ db:add-missing-indices
+        before-starting: |-
+          # disable unneceserry apps
+          for appname in activity circles systemtags federation privacy \
+              nextcloud_announcements announcementcenter support survey_client \
+              user_status weather_status dashboard
+            do
+            php occ app:disable "$appname"
+          done
+        post-upgrade: |-
+          # based on https://github.com/nextcloud/all-in-one/blob/25c580bca370eaead5f1fad9d3842a9c49562dff/Containers/nextcloud/entrypoint.sh#L451-L457
+          php occ maintenance:repair --include-expensive
+          php occ db:add-missing-indices
+          php occ db:add-missing-columns
+          php occ db:add-missing-primary-keys
 
       # securityContext:
       #   runAsUser: *uid
@@ -343,8 +373,8 @@ spec:
 
     startupProbe:
       enabled: true
-      initialDelaySeconds: 5
-      periodSeconds: 10
+      initialDelaySeconds: 10
+      periodSeconds: 20
       timeoutSeconds: 5
       failureThreshold: 360
       successThreshold: 1
