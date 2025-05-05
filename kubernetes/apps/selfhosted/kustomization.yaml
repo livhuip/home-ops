@@ -9,21 +9,8 @@ components:
 resources:
   # - ./actual/ks.yaml
   # - ./atuin/ks.yaml
-  # - ./changedetection/ks.yaml
   # - ./gramps/ks.yaml
-  # - ./hoarder/ks.yaml
-  # - ./homebox/ks.yaml
-  # - ./homepage/ks.yaml
-  # - ./it-tools/ks.yaml
-  # - ./lubelog/ks.yaml
-  # - ./mealie/ks.yaml
-  # - ./minecraft-bedrock/ks.yaml
   # - ./miniflux/ks.yaml
   # - ./n8n/ks.yaml
   - ./nextcloud/ks.yaml
-  # - ./nocodb/ks.yaml
-  # - ./opengist/ks.yaml
-  # - ./radicale/ks.yaml
-  # - ./shlink/ks.yaml
   - ./syncthing/ks.yaml
-# - ./vikunja/ks.yaml
