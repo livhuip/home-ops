@@ -58,7 +58,7 @@ spec:
         type: LoadBalancer
         controller: syncthing
         annotations:
-          lbipam.cilium.io/ips: ${CILIUM_SVC_SYNCTHING_ADDR}
+          lbipam.cilium.io/ips: 10.0.10.9
         ports:
           discovery:
             enabled: true
@@ -100,7 +100,7 @@ spec:
 
       media-swap:
         type: nfs
-        server: ${SECRET_NFS_SERVER}
-        path: ${SECRET_NFS_MOUNT_MEDIA_SWAP}
+        server: ${NAS_IP}
+        path: /mnt/datastore/kubernetes/
         globalMounts:
           - path: /mnt/mediaswap
