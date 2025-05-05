@@ -76,9 +76,11 @@ spec:
     nextcloud:
       host: &host cloud.${SECRET_DOMAIN}
 
+      podSecurityContext:
+        fsGroup: 33
       securityContext:
-        runAsUser: &uid 1000
-        runAsGroup: &gid 1000
+        runAsUser: &uid 33
+        runAsGroup: &gid 33
         runAsNonRoot: true
 
       existingSecret:
