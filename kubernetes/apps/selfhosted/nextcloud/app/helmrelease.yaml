@@ -77,8 +77,8 @@ spec:
       host: &host cloud.${SECRET_DOMAIN}
 
       securityContext:
-        runAsUser: &uid 33
-        runAsGroup: &gid 33
+        runAsUser: &uid 1000
+        runAsGroup: &gid 1000
         runAsNonRoot: true
 
       existingSecret:
