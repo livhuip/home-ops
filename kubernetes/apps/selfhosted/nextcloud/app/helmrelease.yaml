@@ -78,10 +78,10 @@ spec:
 
       # podSecurityContext:
       #   fsGroup: 33
-      # securityContext:
-      #   runAsUser: &uid 1000
-      #   runAsGroup: &gid 1000
-      #   runAsNonRoot: true
+      securityContext:
+        runAsUser: &uid 1000
+        runAsGroup: &gid 1000
+        runAsNonRoot: true
 
       existingSecret:
         enabled: true
