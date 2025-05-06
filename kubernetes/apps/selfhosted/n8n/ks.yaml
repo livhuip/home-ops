@@ -20,10 +20,10 @@ spec:
     namespace: flux-system
   wait: false
   dependsOn:
-    - name: crunchy-postgres-cluster
-      namespace: storage
+    - name: crunchy-postgres-operator-cluster
+      namespace: database
     - name: onepassword-store
-      namespace: security
+      namespace: external-secrets
     - name: volsync
       namespace: storage
   components:
