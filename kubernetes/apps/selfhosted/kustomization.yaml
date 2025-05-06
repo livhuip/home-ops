@@ -12,6 +12,6 @@ resources:
   # - ./atuin/ks.yaml
   # - ./gramps/ks.yaml
   # - ./miniflux/ks.yaml
-  # - ./n8n/ks.yaml
+  - ./n8n/ks.yaml
   # - ./nextcloud/ks.yaml
   - ./syncthing/ks.yaml
