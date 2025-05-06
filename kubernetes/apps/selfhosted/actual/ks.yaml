@@ -17,8 +17,11 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      APP_UID: "1003"
-      APP_GID: "100"
+      # APP_UID: "1003"
+      # APP_GID: "100"
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
