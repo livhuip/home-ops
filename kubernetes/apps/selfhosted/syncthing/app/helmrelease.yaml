@@ -1,33 +1,137 @@
+# ---
+# # yaml-language-server: $schema=https://github.com/fluxcd-community/flux2-schemas/raw/main/helmrelease-helm-v2beta2.json
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: &app syncthing
+# spec:
+#   interval: 30m
+#   chartRef:
+#     kind: OCIRepository
+#     name: app-template
+#     namespace: selfhosted
+#   # apiVersion: helm.toolkit.fluxcd.io/v2
+#   # kind: HelmRelease
+#   # metadata:
+#   #   name: &app syncthing
+#   # spec:
+#   #   interval: 1h
+#   #   chartRef:
+#   #     kind: OCIRepository
+#   #     name: app-template
+#   #   install:
+#   #     remediation:
+#   #       retries: 3
+#   #   upgrade:
+#   #     cleanupOnFail: true
+#   #     remediation:
+#   #       retries: 3
+
+#   maxHistory: 2
+#   install:
+#     remediation:
+#       retries: 3
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#   uninstall:
+#     keepHistory: false
+#   values:
+#     defaultPodOptions:
+#       automountServiceAccountToken: false
+#       securityContext:
+#         runAsUser: 1003
+#         runAsGroup: 100
+#         fsGroup: 100
+#         fsGroupChangePolicy: OnRootMismatch
+
+#     controllers:
+#       syncthing:
+#         annotations:
+#           reloader.stakater.com/auto: "true"
+
+#         containers:
+#           syncthing:
+#             image:
+#               repository: syncthing/syncthing
+#               tag: 1.29.6
+#             resources:
+#               requests:
+#                 cpu: 15m
+#                 memory: 64M
+#               limits:
+#                 cpu: 2000m
+#                 memory: 1G
+#     service:
+#       app:
+#         controller: syncthing
+#         ports:
+#           http:
+#             port: 8384
+
+#       listen:
+#         enabled: true
+#         type: LoadBalancer
+#         controller: syncthing
+#         annotations:
+#           lbipam.cilium.io/ips: 10.0.10.9
+#         ports:
+#           discovery:
+#             enabled: true
+#             port: 21027
+#             protocol: UDP
+#           listen:
+#             enabled: true
+#             port: 22000
+#             protocol: TCP
+#           listen-udp:
+#             enabled: true
+#             port: 22000
+#             protocol: UDP
+
+#     ingress:
+#       main:
+#         enabled: true
+#         className: internal
+#         annotations:
+#           gethomepage.dev/enabled: "true"
+#           gethomepage.dev/group: apps
+#           gethomepage.dev/name: syncthing
+#           gethomepage.dev/icon: sh-syncthing.svg
+#           gethomepage.dev/description: file sync
+#         hosts:
+#           - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+#             paths:
+#               - path: /
+#                 service:
+#                   identifier: app
+#                   port: http
+
+#     persistence:
+#       data:
+#         enabled: true
+#         existingClaim: *app
+#         globalMounts:
+#           - path: /var/syncthing
+
+#       media-swap:
+#         type: nfs
+#         server: ${NAS_IP}
+#         path: /mnt/datastore/kubernetes/
+#         globalMounts:
+#           - path: /mnt/mediaswap
+
 ---
-# yaml-language-server: $schema=https://github.com/fluxcd-community/flux2-schemas/raw/main/helmrelease-helm-v2beta2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app syncthing
 spec:
-  interval: 30m
+  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
-    namespace: selfhosted
-  # apiVersion: helm.toolkit.fluxcd.io/v2
-  # kind: HelmRelease
-  # metadata:
-  #   name: &app syncthing
-  # spec:
-  #   interval: 1h
-  #   chartRef:
-  #     kind: OCIRepository
-  #     name: app-template
-  #   install:
-  #     remediation:
-  #       retries: 3
-  #   upgrade:
-  #     cleanupOnFail: true
-  #     remediation:
-  #       retries: 3
-
-  maxHistory: 2
   install:
     remediation:
       retries: 3
@@ -35,89 +139,113 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
-  values:
-    defaultPodOptions:
-      automountServiceAccountToken: false
-      securityContext:
-        runAsUser: 1003
-        runAsGroup: 100
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
+interval: 15m
+dependsOn:
+  - name: volsync
+    namespace: storage
+install:
+  remediation:
+    retries: 3
+upgrade:
+  cleanupOnFail: true
+  remediation:
+    strategy: rollback
+    retries: 3
+driftDetection:
+  mode: enabled
+  ignore:
+    - paths:
+        - /spec/containers/resources/limits
+      target:
+        kind: Pod
+values:
+  controllers:
+    syncthing:
+      containers:
+        app:
+          image:
+            repository: syncthing/syncthing
+            tag: 1.29.5@sha256:1914deddb3be7808579f3ce0eb4a1c493daa2f01e8953c2d73ba52ee2b1b418a
+          env:
+            PUID: "568"
+            PGID: "568"
+          securityContext:
+            # allowPrivilegeEscalation: false
+            # readOnlyRootFilesystem: false
+            capabilities: { drop: ["ALL"] }
+          resources:
+            requests:
+              cpu: 15m
+              memory: 249Mi
+            limits:
+              memory: 2Gi
 
-    controllers:
-      syncthing:
-        annotations:
-          reloader.stakater.com/auto: "true"
+  defaultPodOptions:
+    securityContext:
+      runAsGroup: 568
+      runAsUser: 568
+      fsGroup: 568
+      fsGroupChangePolicy: OnRootMismatch
+      # runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
 
-        containers:
-          syncthing:
-            image:
-              repository: syncthing/syncthing
-              tag: 1.29.6
-            resources:
-              requests:
-                cpu: 15m
-                memory: 64M
-              limits:
-                cpu: 2000m
-                memory: 1G
-    service:
-      app:
-        controller: syncthing
-        ports:
-          http:
-            port: 8384
+  service:
+    app:
+      controller: *app
+      ports:
+        http:
+          port: 8384
+    discovery:
+      enabled: true
+      controller: *app
+      ports:
+        discovery:
+          enabled: true
+          port: 21027
+          protocol: UDP
+        listen:
+          enabled: true
+          port: 22000
+          protocol: TCP
+        listen-udp:
+          enabled: true
+          port: 22000
+          protocol: UDP
+  ingress:
+    app:
+      className: internal
+      annotations:
+        nginx.ingress.kubernetes.io/whitelist-source-range: |
+          10.69.0.0/16,10.96.0.0/16,10.90.0.0/16
+      hosts:
+        - host: &host sync.${SECRET_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                identifier: app
+                port: http
+      tls:
+        - hosts:
+            - *host
 
-      listen:
-        enabled: true
-        type: LoadBalancer
-        controller: syncthing
-        annotations:
-          lbipam.cilium.io/ips: 10.0.10.9
-        ports:
-          discovery:
-            enabled: true
-            port: 21027
-            protocol: UDP
-          listen:
-            enabled: true
-            port: 22000
-            protocol: TCP
-          listen-udp:
-            enabled: true
-            port: 22000
-            protocol: UDP
-
-    ingress:
-      main:
-        enabled: true
-        className: internal
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: apps
-          gethomepage.dev/name: syncthing
-          gethomepage.dev/icon: sh-syncthing.svg
-          gethomepage.dev/description: file sync
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
-
-    persistence:
-      data:
-        enabled: true
-        existingClaim: *app
-        globalMounts:
-          - path: /var/syncthing
-
-      media-swap:
-        type: nfs
-        server: ${NAS_IP}
-        path: /mnt/datastore/kubernetes/
-        globalMounts:
-          - path: /mnt/mediaswap
+  persistence:
+    data:
+      existingClaim: *app
+      globalMounts:
+        - path: /var/syncthing
+    files:
+      type: nfs
+      server: ${NAS_IP}
+      path: /mnt/datastore/kubernetes/
+      globalMounts:
+        - path: /files
+          subPath: Syncthing
+    emulation:
+      type: nfs
+      server: ${NAS_IP}
+      path: /mnt/datastore/kubernetes/
+      globalMounts:
+        - path: /emulation/
+          subPath: Library/Emulation/
