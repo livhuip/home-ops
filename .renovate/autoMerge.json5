@@ -51,7 +51,8 @@
         "prometheus-operator-crds",
         "prometheus-smartctl-exporter",
         "pgadmin4",
-        "prometheus-blackbox-exporter"
+        "prometheus-blackbox-exporter",
+        "descheduler"
         ],
       automerge: true,
       automergeType: "pr",
