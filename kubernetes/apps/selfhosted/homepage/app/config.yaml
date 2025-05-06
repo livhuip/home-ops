@@ -62,7 +62,7 @@ data:
         target: _blank
 
     - unifi_console:
-        url: https://192.168.0.1
+        url: https://192.168.86.1
         username: {{HOMEPAGE_VAR_WID_UBI_USER}}
         password: {{HOMEPAGE_VAR_WID_UBI_PASS}}
 
@@ -102,11 +102,11 @@ data:
     - network:
         - unifi:
             icon: ubiquiti
-            href: https://192.168.0.1
-            siteMonitor: https://192.168.0.1
+            href: https://192.168.86.1
+            siteMonitor: https://192.168.86.1
             widget:
                 type: unifi
-                url: https://192.168.0.1
+                url: https://192.168.86.1
                 username: {{HOMEPAGE_VAR_WID_UBI_USER}}
                 password: {{HOMEPAGE_VAR_WID_UBI_PASS}}
 
