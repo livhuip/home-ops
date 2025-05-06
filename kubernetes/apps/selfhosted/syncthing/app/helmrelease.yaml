@@ -139,25 +139,13 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-interval: 15m
-dependsOn:
-  - name: volsync
-    namespace: storage
-install:
-  remediation:
-    retries: 3
-upgrade:
-  cleanupOnFail: true
-  remediation:
-    strategy: rollback
-    retries: 3
-driftDetection:
-  mode: enabled
-  ignore:
-    - paths:
-        - /spec/containers/resources/limits
-      target:
-        kind: Pod
+  driftDetection:
+    mode: enabled
+    ignore:
+      - paths:
+          - /spec/containers/resources/limits
+        target:
+          kind: Pod
   values:
     controllers:
       syncthing:
