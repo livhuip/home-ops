@@ -64,9 +64,9 @@ spec:
       databases:
         - n8n
       password: *password
-    - name: "nextcloud"
+    - name: "nextcloud-0"
       databases:
-        - nextcloud
+        - nextcloud-0
       password: *password
     - name: "authentik"
       databases:
