@@ -158,94 +158,94 @@ driftDetection:
         - /spec/containers/resources/limits
       target:
         kind: Pod
-values:
-  controllers:
-    syncthing:
-      containers:
-        app:
-          image:
-            repository: syncthing/syncthing
-            tag: 1.29.5@sha256:1914deddb3be7808579f3ce0eb4a1c493daa2f01e8953c2d73ba52ee2b1b418a
-          env:
-            PUID: "568"
-            PGID: "568"
-          securityContext:
-            # allowPrivilegeEscalation: false
-            # readOnlyRootFilesystem: false
-            capabilities: { drop: ["ALL"] }
-          resources:
-            requests:
-              cpu: 15m
-              memory: 249Mi
-            limits:
-              memory: 2Gi
+  values:
+    controllers:
+      syncthing:
+        containers:
+          app:
+            image:
+              repository: syncthing/syncthing
+              tag: 1.29.5@sha256:1914deddb3be7808579f3ce0eb4a1c493daa2f01e8953c2d73ba52ee2b1b418a
+            env:
+              PUID: "568"
+              PGID: "568"
+            securityContext:
+              # allowPrivilegeEscalation: false
+              # readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 15m
+                memory: 249Mi
+              limits:
+                memory: 2Gi
 
-  defaultPodOptions:
-    securityContext:
-      runAsGroup: 568
-      runAsUser: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
-      # runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
+    defaultPodOptions:
+      securityContext:
+        runAsGroup: 568
+        runAsUser: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        # runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
 
-  service:
-    app:
-      controller: *app
-      ports:
-        http:
-          port: 8384
-    discovery:
-      enabled: true
-      controller: *app
-      ports:
-        discovery:
-          enabled: true
-          port: 21027
-          protocol: UDP
-        listen:
-          enabled: true
-          port: 22000
-          protocol: TCP
-        listen-udp:
-          enabled: true
-          port: 22000
-          protocol: UDP
-  ingress:
-    app:
-      className: internal
-      annotations:
-        nginx.ingress.kubernetes.io/whitelist-source-range: |
-          10.69.0.0/16,10.96.0.0/16,10.90.0.0/16
-      hosts:
-        - host: &host sync.${SECRET_DOMAIN}
-          paths:
-            - path: /
-              pathType: Prefix
-              service:
-                identifier: app
-                port: http
-      tls:
-        - hosts:
-            - *host
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 8384
+      discovery:
+        enabled: true
+        controller: *app
+        ports:
+          discovery:
+            enabled: true
+            port: 21027
+            protocol: UDP
+          listen:
+            enabled: true
+            port: 22000
+            protocol: TCP
+          listen-udp:
+            enabled: true
+            port: 22000
+            protocol: UDP
+    ingress:
+      app:
+        className: internal
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: |
+            10.69.0.0/16,10.96.0.0/16,10.90.0.0/16
+        hosts:
+          - host: &host sync.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - *host
 
-  persistence:
-    data:
-      existingClaim: *app
-      globalMounts:
-        - path: /var/syncthing
-    files:
-      type: nfs
-      server: ${NAS_IP}
-      path: /mnt/datastore/kubernetes/
-      globalMounts:
-        - path: /files
-          subPath: Syncthing
-    emulation:
-      type: nfs
-      server: ${NAS_IP}
-      path: /mnt/datastore/kubernetes/
-      globalMounts:
-        - path: /emulation/
-          subPath: Library/Emulation/
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /var/syncthing
+      files:
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/datastore/kubernetes/
+        globalMounts:
+          - path: /files
+            subPath: Syncthing
+      emulation:
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/datastore/kubernetes/
+        globalMounts:
+          - path: /emulation/
+            subPath: Library/Emulation/
