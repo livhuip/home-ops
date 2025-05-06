@@ -203,9 +203,14 @@ spec:
     ingress:
       app:
         className: internal
-        annotations:
-          nginx.ingress.kubernetes.io/whitelist-source-range: |
-            10.69.0.0/16,10.96.0.0/16,10.90.0.0/16
+        # annotations:
+        #           gethomepage.dev/enabled: "true"
+        #           gethomepage.dev/group: apps
+        #           gethomepage.dev/name: syncthing
+        #           gethomepage.dev/icon: sh-syncthing.svg
+        #           gethomepage.dev/description: file sync
+        # nginx.ingress.kubernetes.io/whitelist-source-range: |
+        #   10.42.0.0/16,10.43.0.0/16,192.168.86.0/24
         hosts:
           - host: &host sync.${SECRET_DOMAIN}
             paths:
