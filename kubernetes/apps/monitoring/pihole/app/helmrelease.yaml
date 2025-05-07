@@ -89,7 +89,7 @@ spec:
               repository: ekofr/pihole-exporter
               tag: latest@sha256:61bd07030394a4cf069d5a19cd5f4d62180e9f25fd6e0e159af5ed90021fd7d3
             env:
-              PIHOLE_HOSTNAME: 192.168.86.100
+              PIHOLE_HOSTNAME: 192.168.86.100:1080
               PORT: &port 9617
               PIHOLE_PROTOCOL: http
             envFrom:
