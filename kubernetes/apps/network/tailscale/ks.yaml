@@ -28,12 +28,12 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: tailscale-operator-config
-  namespace: *namespace
+  namespace: network
 spec:
   interval: 1h
   dependsOn:
     - name: tailscale
-  targetNamespace: *namespace
+  targetNamespace: *network
   path: ./kubernetes/apps/network/tailscale/config
   prune: true
   sourceRef:
