@@ -33,7 +33,7 @@ spec:
   interval: 1h
   dependsOn:
     - name: tailscale
-  targetNamespace: *network
+  targetNamespace: network
   path: ./kubernetes/apps/network/tailscale/config
   prune: true
   sourceRef:
