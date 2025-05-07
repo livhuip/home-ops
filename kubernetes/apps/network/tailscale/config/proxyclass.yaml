@@ -1,0 +1,27 @@
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: tailscale
+spec:
+  metrics:
+    enable: true
+  statefulSet:
+    pod:
+      nodeSelector:
+        kubernetes.io/os: "linux"
+      tailscaleContainer:
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
+          appArmorProfile:
+            type: Unconfined
+      tailscaleInitContainer:
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
+          appArmorProfile:
+            type: Unconfined
