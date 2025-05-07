@@ -68,6 +68,10 @@ spec:
       databases:
         - nextcloud-0
       password: *password
+    - name: "miniflux"
+      databases:
+        - miniflux
+      password: *password
     - name: "authentik"
       databases:
         - authentik
