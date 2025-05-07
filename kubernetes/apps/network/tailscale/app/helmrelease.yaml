@@ -21,8 +21,7 @@ spec:
       hostname: "tailscale-operator"
       defaultTags:
         - "tag:k8s-operator"
-      extraArgs:
-        - "--advertise-exit-node"
-        - "--advertise-routes=0.0.0.0/0"
+      exitNode: true # Enable exit node functionality
+      exitNodeAllowLANAccess: true
     apiServerProxyConfig:
       mode: "true"
