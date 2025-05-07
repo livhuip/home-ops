@@ -52,7 +52,10 @@
         "prometheus-smartctl-exporter",
         "pgadmin4",
         "prometheus-blackbox-exporter",
-        "descheduler"
+        "descheduler",
+        "tailscale-operator	",
+        "syncthing/syncthing"
+
         ],
       automerge: true,
       automergeType: "pr",
