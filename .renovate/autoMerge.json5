@@ -53,9 +53,8 @@
         "pgadmin4",
         "prometheus-blackbox-exporter",
         "descheduler",
-        "tailscale-operator	",
+        "tailscale-operator",
         "syncthing/syncthing"
-
         ],
       automerge: true,
       automergeType: "pr",
