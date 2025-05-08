@@ -91,7 +91,7 @@ spec:
             env:
               PIHOLE_HOSTNAME: 192.168.86.100:1080
               PORT: &port 9617
-              PIHOLE_PROTOCOL: http
+              # PIHOLE_PROTOCOL: http
             envFrom:
               - secretRef:
                   name: pihole-exporter-secret
