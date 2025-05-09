@@ -89,7 +89,7 @@ spec:
               repository: ghcr.io/osnabrugge/pihole-exporter #ekofr/pihole-exporter
               tag: v1.0.1@sha256:c99456442c542d9d517afe2e863b92b2036548f0ee84c22c62f91a9e3396803c #latest@sha256:61bd07030394a4cf069d5a19cd5f4d62180e9f25fd6e0e159af5ed90021fd7d3
             env:
-              PIHOLE_HOSTNAME: 192.168.86.100:1080
+              PIHOLE_HOSTNAME: 192.168.86.100
               PORT: &port 9617
               # PIHOLE_PORT: "1080"
               PIHOLE_PROTOCOL: http
