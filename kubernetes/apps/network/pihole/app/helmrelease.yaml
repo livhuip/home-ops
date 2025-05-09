@@ -82,7 +82,7 @@ spec:
     podAnnotations:
       secret.reloader.stakater.com/reload: *secret
     extraArgs:
-      - --pihole-server=http://192.168.86.100:1080/api
+      - --pihole-server=http://192.168.86.100:1080/
       - --ignore-ingress-tls-spec
       - --ingress-class=internal
     policy: sync
