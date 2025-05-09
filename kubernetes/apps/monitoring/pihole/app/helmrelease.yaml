@@ -91,6 +91,7 @@ spec:
             env:
               PIHOLE_HOSTNAME: 192.168.86.100:1080
               PORT: &port 9617
+              PIHOLE_PORT: "1080"
               PIHOLE_PROTOCOL: http
             envFrom:
               - secretRef:
