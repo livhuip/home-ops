@@ -11,4 +11,4 @@ spec:
     labels: *l
   path: ./kubernetes/apps/network/e1000e-fix/app
   targetNamespace: "network"
-  dependsOn: []
+  # dependsOn: []
