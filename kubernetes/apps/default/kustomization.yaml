@@ -14,4 +14,4 @@ resources:
   - ./it-tools/ks.yaml
   - ./vaultwarden/ks.yaml
   - ./rustdesk/ks.yaml
-  - ./opensspeedtest/ks.yaml
+  - ./openspeedtest/ks.yaml
