@@ -79,7 +79,7 @@ releases:
       [
         '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/app/helm/values.yaml',
       ]
-    needs: ["cert-manager/cert-manager"]
+    # needs: ["cert-manager/cert-manager"]
 
   - name: flux-instance
     namespace: flux-system
