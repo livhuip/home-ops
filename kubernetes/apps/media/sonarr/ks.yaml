@@ -6,7 +6,7 @@ metadata:
   name: &app sonarr
   namespace: flux-system
 spec:
-  targetNamespace: default
+  targetNamespace: media
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -15,7 +15,7 @@ spec:
   #   - name: external-secrets-stores
   #   - name: volsync
   #   - name: rook-ceph-cluster
-  path: ./kubernetes/apps/default/sonarr/app
+  path: ./kubernetes/apps/media/sonarr/app
   prune: true
   sourceRef:
     kind: GitRepository
