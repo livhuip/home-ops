@@ -43,7 +43,7 @@ metadata:
   name: &app sonarr
   namespace: flux-system
 spec:
-  targetNamespace: storage
+  targetNamespace: media
   path: ./kubernetes/apps/media/sonarr/app
   components:
     - ../../../../components/volsync
