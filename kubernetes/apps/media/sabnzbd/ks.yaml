@@ -10,10 +10,10 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: external-secrets-stores
-    - name: rook-ceph-cluster
-    - name: volsync
+  # dependsOn:
+  #   - name: external-secrets-stores
+  #   - name: rook-ceph-cluster
+  #   - name: volsync
   path: ./kubernetes/apps/default/sabnzbd/app
   prune: true
   sourceRef:

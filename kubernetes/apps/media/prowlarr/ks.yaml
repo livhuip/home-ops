@@ -10,9 +10,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: crunchy-postgres-operator
-    - name: external-secrets-stores
+  # dependsOn:
+  #   - name: crunchy-postgres-operator
+  #   - name: external-secrets-stores
   path: ./kubernetes/apps/default/prowlarr/app
   prune: true
   sourceRef:
