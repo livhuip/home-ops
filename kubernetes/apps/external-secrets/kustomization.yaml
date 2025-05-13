@@ -8,5 +8,5 @@ components:
 resources:
   # []
   - ./external-secrets/ks.yaml
-  # - ./onepassword/ks.yaml
+  - ./onepassword/ks.yaml
   - ./secret.sops.yaml
