@@ -18,6 +18,8 @@ spec:
     - name: onepassword-store
       namespace: external-secrets
   path: ./kubernetes/apps/media/sonarr/app
+  components:
+    - ../../../../components/volsync
   prune: true
   sourceRef:
     kind: GitRepository
@@ -29,6 +31,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      DB_NAME: sonarr
-      DB_USER: sonarr
-      VOLSYNC_CAPACITY: 15Gi
+      # DB_NAME: sonarr
+      # DB_USER: sonarr
+      VOLSYNC_CAPACITY: 5Gi

@@ -170,7 +170,7 @@ spec:
               repository: ghcr.io/onedr0p/sonarr-develop
               tag: 4.0.14.2938
             env:
-              TZ: Europe/Warsaw
+              TZ: ${TIMEZONE}
               SONARR__APP__INSTANCENAME: Sonarr
               SONARR__APP__THEME: dark
               SONARR__AUTH__METHOD: External
