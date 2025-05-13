@@ -64,10 +64,10 @@ spec:
     #   databases:
     #     - atuin
     #   password: *password
-    # - name: "autobrr"
-    #   databases:
-    #     - autobrr
-    #   password: *password
+    - name: "autobrr"
+      databases:
+        - autobrr
+      password: *password
     - name: "sonarr"
       databases:
         - sonarr
