@@ -10,16 +10,17 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: crunchy-postgres-operator
-    - name: external-secrets-stores
-    - name: volsync
-    - name: rook-ceph-cluster
+  # dependsOn:
+  #   - name: crunchy-postgres-operator
+  #   - name: external-secrets-stores
+  #   - name: volsync
+  #   - name: rook-ceph-cluster
   path: ./kubernetes/apps/default/sonarr/app
   prune: true
   sourceRef:
     kind: GitRepository
-    name: theshire
+    name: flux-system
+    namespace: flux-system
   wait: false
   interval: 30m
   timeout: 5m
