@@ -218,14 +218,14 @@ spec:
         tls:
           - hosts:
               - *host
-    # defaultPodOptions:
-    #   enableServiceLinks: true
-    #   securityContext:
-    #     runAsUser: ${NAS_UID}
-    #     runAsGroup: ${NAS_GID}
-    #     fsGroup: ${NAS_GID}
-    #     fsGroupChangePolicy: OnRootMismatch
-    #     supplementalGroups: [10000]
+    defaultPodOptions:
+      enableServiceLinks: true
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [10000]
     persistence:
       config:
         enabled: true
