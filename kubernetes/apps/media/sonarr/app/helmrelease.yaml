@@ -234,7 +234,7 @@ spec:
         enabled: true
         type: nfs
         globalMounts:
-          - path: /series
+          - path: /Media
         server: "${NAS_IP}"
         path: "/mnt/datastore/mediacentre"
     podAnnotations:
