@@ -68,6 +68,10 @@ spec:
       databases:
         - autobrr
       password: *password
+    - name: "prowlarr"
+      databases:
+        - prowlarr
+      password: *password
     - name: "radarr"
       databases:
         - radarr
