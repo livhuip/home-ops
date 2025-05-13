@@ -113,13 +113,7 @@ spec:
         type: emptyDir
       media:
         type: nfs
-        server: 10.1.1.61
-        path: /eru/media
+        server: ${NAS_IP}
+        path: "/mnt/datastore/mediacentre"
         globalMounts:
-          - path: /data/nas-media
-      moria-media:
-        type: nfs
-        server: 10.1.1.61
-        path: /moria/media/
-        globalMounts:
-          - path: /data/moria-media
+          - path: /Media
