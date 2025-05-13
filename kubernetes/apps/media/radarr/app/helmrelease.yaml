@@ -41,7 +41,7 @@ spec:
               RADARR__LOG__LEVEL: info
               RADARR__SERVER__PORT: &port 80
               RADARR__UPDATE__BRANCH: develop
-              TZ: America/Chicago
+              TZ: ${TIMEZONE}
             envFrom:
               - secretRef:
                   name: radarr-secret
@@ -83,7 +83,7 @@ spec:
         enabled: true
         className: internal-nginx
         hosts:
-          - host: &host "{{ .Release.Name }}.jahanson.tech"
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -96,7 +96,7 @@ spec:
         enabled: true
         className: tailscale
         hosts:
-          - host: &host "{{ .Release.Name }}.meerkat-dab.ts.net"
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
