@@ -6,7 +6,7 @@ resources:
   # []
 
   - ./externalsecret.yaml
-  # - ./helmrelease.yaml
+  - ./helmrelease.yaml
 # configMapGenerator:
 #   - name: sonarr-configmap
 #     files:
