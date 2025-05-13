@@ -68,10 +68,10 @@ spec:
       databases:
         - autobrr
       password: *password
-    - name: "sonarr"
-      databases:
-        - sonarr
-      password: *password
+    # - name: "sonarr"
+    #   databases:
+    #     - sonarr
+    #   password: *password
     - name: "n8n"
       databases:
         - n8n
