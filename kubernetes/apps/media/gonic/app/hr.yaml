@@ -45,7 +45,7 @@ spec:
               GONIC_SCAN_INTERVAL: "120"
               GONIC_PLAYLISTS_PATH: /Media/music
               GONIC_MUSIC_PATH: /Media/music/downloads
-              GONIC_PODCAST_PATH: Media/music
+              GONIC_PODCAST_PATH: /Media/music
             resources:
               requests:
                 cpu: 15m
