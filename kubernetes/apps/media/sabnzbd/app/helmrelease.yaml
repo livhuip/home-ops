@@ -22,11 +22,6 @@ spec:
     remediation:
       retries: 3
       strategy: rollback
-  dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
   values:
     controllers:
       sabnzbd:
