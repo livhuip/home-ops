@@ -6,10 +6,11 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
 configMapGenerator:
-  - name: sabnzbd-scripts
+  - name: cross-seed-loki-rules
     files:
-      - post-process.sh=./resources/post-process.sh
+      - cross-seed.yaml=./resources/lokirule.yaml
+    options:
+      labels:
+        loki_rule: "true"
 generatorOptions:
   disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
