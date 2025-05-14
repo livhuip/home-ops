@@ -33,12 +33,12 @@ spec:
               repository: ghcr.io/unpackerr/unpackerr
               tag: 0.14.5@sha256:dc72256942ce50d1c8a1aeb5aa85b6ae2680a36eefd2182129d8d210fce78044
             env:
-              TZ: America/Chicago
+              TZ: ${TIMEZONE}
               UN_WEBSERVER_METRICS: "true"
-              UN_SONARR_0_URL: http://sonarr.default.svc.cluster.local
-              UN_SONARR_0_PATHS_0: /data/nas-media/qb/downloads/complete/sonarr/
-              UN_RADARR_0_URL: http://radarr.default.svc.cluster.local
-              UN_RADARR_0_PATHS_0: /data/nas-media/qb/downloads/complete/radarr/
+              UN_SONARR_0_URL: http://sonarr.media.svc.cluster.local
+              UN_SONARR_0_PATHS_0: /mnt/datastore/mediacentre/Downloads/sabnzbd/completed
+              UN_RADARR_0_URL: http://radarr.media.svc.cluster.local
+              UN_RADARR_0_PATHS_0: /mnt/datastore/mediacentre/Downloads/sabnzbd/completed
             envFrom:
               - secretRef:
                   name: unpackerr-secret
@@ -76,9 +76,9 @@ spec:
     persistence:
       media:
         type: nfs
-        server: 10.1.1.61
-        path: /eru/media
+        server: ${NAS_IP}
+        path: /mnt/datastore/mediacentre
         advancedMounts:
           unpackerr:
             app:
-              - path: /data/nas-media
+              - path: /Media
