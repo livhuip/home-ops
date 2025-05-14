@@ -81,4 +81,8 @@ spec:
             readOnly: true
 
       media:
-        existingClaim: media-nfs-share-pvc
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/datastore/mediacentre
+        globalMounts:
+          - path: /Media

@@ -107,7 +107,7 @@ spec:
         enabled: true
         className: internal
         hosts:
-          - host: &host sabz.j${SECRET_DOMAIN}
+          - host: &host sabz.${SECRET_DOMAIN}
             paths:
               - path: /
                 service:
