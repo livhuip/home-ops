@@ -233,7 +233,7 @@ spec:
         server: ${NAS_IP}
         path: /mnt/datastore/mediacentre
         globalMounts:
-          - path: /media/Downloads/qbittorrent
+          - path: /Media/Downloads/qbittorrent
             subPath: Downloads/qbittorrent
       tmp:
         type: emptyDir
