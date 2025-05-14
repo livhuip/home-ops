@@ -24,3 +24,4 @@ resources:
   - ./sabnzbd/ks.yaml
   - ./sonarr/ks.yaml
   - ./unpackerr/ks.yaml
+  - ./gonic/ks.yaml
