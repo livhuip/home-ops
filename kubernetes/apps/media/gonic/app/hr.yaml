@@ -1,0 +1,90 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app gonic
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        # pod:
+        #   securityContext:
+        #     supplementalGroups:
+        #       - 1000
+        containers:
+          main:
+            image:
+              repository: ghcr.io/sentriz/gonic
+              tag: v0.16.4@sha256:c27ac11f457288c4eb86f3ac5c8fddc79655b94f2f0e28cf00f50e60059a1342
+            env:
+              GONIC_SCAN_INTERVAL: "120"
+              GONIC_PLAYLISTS_PATH: /media/audio/playlists
+              GONIC_MUSIC_PATH: /media/audio/music
+              GONIC_PODCAST_PATH: /media/audio/podcasts
+            resources:
+              requests:
+                cpu: 15m
+                memory: 800M
+              limits:
+                memory: 800M
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: &httpPort 80
+    ingress:
+      main:
+        enabled: true
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: &host gonic.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      data:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      media:
+        enabled: true
+        type: nfs
+        server: "${NAS_IP}"
+        path: "/mnt/datastore/mediacentre"
+        globalMounts:
+          - path: /Media
