@@ -19,7 +19,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      #   # GATUS_SUBDOMAIN: cloud
       VOLSYNC_CAPACITY: 5Gi
       VOLSYNC_START_MINUTE: "11"
     substituteFrom:
