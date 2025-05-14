@@ -5,22 +5,16 @@ kind: HelmRelease
 metadata:
   name: qbtools
 spec:
-  interval: 30m
-  chart:
-    spec:
-      chart: app-template
-      version: 3.7.3
-      sourceRef:
-        kind: HelmRepository
-        name: bjw-s
-        namespace: flux-system
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
   dependsOn:
     - name: qbittorrent
@@ -31,7 +25,7 @@ spec:
         type: cronjob
         cronjob: &cronJobSpec
           schedule: "@hourly"
-          timeZone: &timeZone America/New_York
+          timeZone: &timeZone ${TIMEZONE}
           concurrencyPolicy: Forbid
           successfulJobsHistory: 1
           failedJobsHistory: 1
@@ -141,8 +135,8 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
+        runAsUser: 1000
+        runAsGroup: 1000
         seccompProfile: { type: RuntimeDefault }
     persistence:
       secret-file:
@@ -153,9 +147,11 @@ spec:
             subPath: config.yaml
             readOnly: true
       media:
-        existingClaim: media-nfs-share-pvc
+        type: nfs
+        server: ${NAS_IP}
+        path: /mnt/datastore/mediacentre
         advancedMounts:
           orphaned:
             app:
-              - path: /media/qb/downloads
-                subPath: qb/downloads
+              - path: /Media/Downloads/qbittorrent
+                subPath: Downloads/qbittorrent
