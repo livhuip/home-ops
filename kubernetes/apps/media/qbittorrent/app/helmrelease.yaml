@@ -91,7 +91,7 @@ spec:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
-        className: internal-nginx
+        className: internal
         hosts:
           - host: qb.${SECRET_DOMAIN}
             paths:
