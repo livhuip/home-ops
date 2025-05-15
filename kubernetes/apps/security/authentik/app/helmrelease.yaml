@@ -71,4 +71,4 @@ spec:
         requests:
           cpu: 400m
         limits:
-          memory: 1G
+          memory: 2G
