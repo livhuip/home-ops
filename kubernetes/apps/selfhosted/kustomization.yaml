@@ -14,4 +14,4 @@ resources:
   - ./miniflux/ks.yaml
   - ./n8n/ks.yaml
   # - ./nextcloud/ks.yaml
-  # - ./syncthing/ks.yaml
+  - ./syncthing/ks.yaml
