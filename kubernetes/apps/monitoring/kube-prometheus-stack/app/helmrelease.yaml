@@ -148,5 +148,5 @@ spec:
               storageClassName: ceph-rbd
               resources:
                 requests:
-                  storage: 55Gi
+                  storage: 75Gi
         walCompression: true
