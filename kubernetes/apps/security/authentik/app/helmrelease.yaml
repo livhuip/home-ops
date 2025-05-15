@@ -40,9 +40,9 @@ spec:
         minReplicas: 1
       resources:
         requests:
-          cpu: 200m
+          cpu: 400m
         limits:
-          memory: 1G
+          memory: 2G
       metrics:
         prometheus:
           serviceMonitor:
@@ -69,6 +69,6 @@ spec:
         minReplicas: 1
       resources:
         requests:
-          cpu: 200m
+          cpu: 400m
         limits:
-          memory: 1G
+          memory: 2G
