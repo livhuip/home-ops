@@ -60,9 +60,9 @@ spec:
                   httpGet:
                     path: /api?mode=version
                     port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
+                  initialDelaySeconds: 30
+                  periodSeconds: 20
+                  timeoutSeconds: 5
                   failureThreshold: 3
               readiness: *probes
               startup:
@@ -142,3 +142,10 @@ spec:
         path: /mnt/datastore/mediacentre
         globalMounts:
           - path: /Media
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
