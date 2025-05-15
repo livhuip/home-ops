@@ -241,4 +241,4 @@ spec:
       secret.reloader.stakater.com/reload: sonarr
     resources:
       limits:
-        memory: 500Mi
+        memory: 1024Mi
