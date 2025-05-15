@@ -40,7 +40,7 @@ spec:
         minReplicas: 1
       resources:
         requests:
-          cpu: 400m
+          cpu: 200m
         limits:
           memory: 2G
       metrics:
@@ -69,6 +69,6 @@ spec:
         minReplicas: 1
       resources:
         requests:
-          cpu: 400m
+          cpu: 200m
         limits:
           memory: 2G
