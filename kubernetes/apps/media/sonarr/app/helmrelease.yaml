@@ -218,14 +218,14 @@ spec:
         tls:
           - hosts:
               - *host
-    # defaultPodOptions:
-    #   enableServiceLinks: true
-    #   securityContext:
-    #     runAsUser: 1000
-    #     runAsGroup: 1000
-    #     fsGroup: 1000
-    #     fsGroupChangePolicy: OnRootMismatch
-    #     supplementalGroups: [10000]
+    defaultPodOptions:
+      enableServiceLinks: true
+      securityContext:
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [10000]
     persistence:
       config:
         enabled: true
