@@ -29,8 +29,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: crunchy-cluster-vector
-      namespace: database
+    # - name: crunchy-cluster-vector
+    #   namespace: database
     - name: dragonfly-cluster
       namespace: database
   interval: 30m
