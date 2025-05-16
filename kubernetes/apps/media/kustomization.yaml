@@ -23,5 +23,5 @@ resources:
   # - ./redlib/ks.yaml
   - ./sabnzbd/ks.yaml
   - ./sonarr/ks.yaml
-  - ./unpackerr/ks.yaml
+  # - ./unpackerr/ks.yaml
   - ./gonic/ks.yaml
