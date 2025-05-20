@@ -30,7 +30,7 @@ spec:
 
     ingress:
       enabled: true
-      className: external
+      className: internal
       annotations:
         gethomepage.dev/enabled: "true"
         gethomepage.dev/group: document
@@ -139,11 +139,11 @@ spec:
 
       mail:
         enabled: true
-        fromAddress: nextcloud
+        fromAddress: noreply
         domain: "${SECRET_DOMAIN}"
         smtp:
           secure: ssl
-          port: 465
+          port: 587
           authtype: LOGIN
 
       extraInitContainers:
