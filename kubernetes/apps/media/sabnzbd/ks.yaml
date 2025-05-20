@@ -23,6 +23,7 @@ spec:
       VOLSYNC_CAPACITY: 1Gi
       # VOLSYNC_UID: "1022"
       # VOLSYNC_GID: "1022"
+      # VOLSYNC_STORAGECLASS: openebs-hostpath
       VOLSYNC_START_MINUTE: "11"
     substituteFrom:
       - name: cluster-secrets
