@@ -139,10 +139,10 @@ spec:
 
       mail:
         enabled: true
-        fromAddress: starttls
+        fromAddress: noreply
         domain: "${SECRET_DOMAIN}"
         smtp:
-          secure: ssl
+          secure: starttls
           port: 587
           authtype: LOGIN
 
