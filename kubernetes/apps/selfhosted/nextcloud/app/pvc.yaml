@@ -27,7 +27,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: ${NAS_IP}
-    path: /mnt/datastore/nextcloud
+    path: /mnt/datastore/nextcloud_data
   # Note: The first two options are strictly for NFSv4.2
   mountOptions: ["nfsvers=4.2", "nconnect=8", "hard", "noatime"]
 ---
