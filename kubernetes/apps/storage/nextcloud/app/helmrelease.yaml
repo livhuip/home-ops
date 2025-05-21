@@ -42,7 +42,7 @@ spec:
           image: ghcr.io/home-operations/postgres-init:17.5
           envFrom:
             - secretRef:
-                name: nextcloud-secret
+                name: nextcloud-secret-0
       datadir: /var/www/data
       extraEnv:
         - name: REDIS_HOST
@@ -51,11 +51,11 @@ spec:
           value: "6379"
       existingSecret:
         enabled: true
-        secretName: nextcloud-secret
+        secretName: nextcloud-secret-0
         smtpHostKey: smtp_host
         smtpUsernameKey: smtp_username
         smtpPasswordKey: smtp_password
-      host: &host cloud.${SECRET_DOMAIN}
+      host: &host nextcloud.${SECRET_DOMAIN}
       # mail:
       #   enabled: true
       #   fromAddress: admin
@@ -75,7 +75,7 @@ spec:
             ),
             'trusted_domains' => array(
               0 => '127.0.0.1',
-              1 => 'cloud.${SECRET_DOMAIN}',
+              1 => 'nextcloud.${SECRET_DOMAIN}',
             ),
             'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
           ); ?>
@@ -94,12 +94,13 @@ spec:
       database: nextcloud
       existingSecret:
         enabled: true
-        secretName: nextcloud-secret
+        secretName: nextcloud-secret-0
         usernameKey: INIT_POSTGRES_USER
         passwordKey: INIT_POSTGRES_PASS
+
     ingress:
       enabled: true
-      className: external
+      className: internal
       annotations:
         external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
         nginx.ingress.kubernetes.io/proxy-body-size: "10G"
@@ -133,7 +134,7 @@ spec:
       pathType: Prefix
       tls:
         - hosts:
-            - cloud.${SECRET_DOMAIN}
+            - nextcloud.${SECRET_DOMAIN}
     persistence:
       enabled: true
       existingClaim: nextcloud
