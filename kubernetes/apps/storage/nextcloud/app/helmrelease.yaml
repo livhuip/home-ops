@@ -22,7 +22,7 @@ spec:
             path: "/mnt/datastore/nextcloud"
       extraVolumeMounts:
         - name: nfs-home
-          mountPath: "/mnt/datastore/nextcloud"
+          mountPath: "/var/www/html/data"
       extraEnv:
         - name: OIDC_CLIENT_ID
           valueFrom:
