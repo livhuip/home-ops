@@ -39,6 +39,7 @@ spec:
             secretKeyRef:
               name: *secret
               key: REDIS_PASSWORD
+      datadir: "/mnt/datastore/nextcloud"
       existingSecret:
         enabled: true
         secretName: nextcloud-secret
