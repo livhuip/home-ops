@@ -84,6 +84,10 @@ spec:
       databases:
         - n8n
       password: *password
+    - name: "nextcloud-1"
+      databases:
+        - nextcloud-1
+      password: *password
     - name: "nextcloud-0"
       databases:
         - nextcloud-0
