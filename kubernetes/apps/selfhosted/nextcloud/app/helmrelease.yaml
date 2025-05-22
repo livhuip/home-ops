@@ -216,4 +216,4 @@ spec:
     persistence:
       config:
         enabled: true
-      existingClaim: *app
+        existingClaim: *app
