@@ -16,14 +16,14 @@ spec:
     nextcloud:
       datadir: /var/www/html/data
       host: &host cloud.${SECRET_DOMAIN}
-      # extraVolumes:
-      #   - name: nfs-home
-      #     nfs:
-      #       server: "${NAS_IP}"
-      #       path: "/mnt/datastore/nextcloud_data"
-      # extraVolumeMounts:
-      #   - name: nfs-home
-      #     mountPath: "/var/www/html/data"
+      extraVolumes:
+        - name: nfs-home
+          nfs:
+            server: "${NAS_IP}"
+            path: "/mnt/datastore/nextcloud_data"
+      extraVolumeMounts:
+        - name: nfs-home
+          mountPath: "/var/www/html/data"
       extraEnv:
         - name: OIDC_CLIENT_ID
           valueFrom:
@@ -207,6 +207,6 @@ spec:
       config:
         enabled: true
         existingClaim: *app
-      data:
-        enabled: true
-        existingClaim: nextcloud-data
+      # data:
+      #   enabled: true
+      #   existingClaim: nextcloud-data
