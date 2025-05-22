@@ -229,4 +229,4 @@ spec:
     #       secretName: "${SECRET_DOMAIN/./-}-production-tls"
     persistence:
       enabled: true
-      existingClaim: nextcloud
+      existingClaim: *app
