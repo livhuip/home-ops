@@ -164,6 +164,7 @@ spec:
 
       defaultConfigs:
         redis.config.php: false
+        s3.config.php: false
 
       configs:
         local.config.php: |-
@@ -194,6 +195,12 @@ spec:
             'datadirectory' => '/var/www/data',
           );
 
+        storage.config.php: |-
+          <?php
+          $CONFIG = array (
+            'datadirectory' => '/var/www/data',
+          );
+
         ingress.config.php: |-
           <?php
           $CONFIG = array (
@@ -213,6 +220,12 @@ spec:
                 'dbindex' => getenv('REDIS_DB'),
               )
             );
+
+        s3.config.php: |-
+          <?php
+          // Intentionally empty to disable S3 object storage
+          $CONFIG = array();
+
         sso.config.php: |-
           <?php
           $CONFIG = array (
