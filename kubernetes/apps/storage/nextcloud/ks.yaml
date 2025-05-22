@@ -22,7 +22,7 @@ spec:
   #     namespace: storage
   components:
     - ../../../../components/volsync
-  path: ./kubernetes/main/apps/storage/nextcloud/app
+  path: ./kubernetes/apps/storage/nextcloud/app
   prune: true
   sourceRef:
     kind: GitRepository
