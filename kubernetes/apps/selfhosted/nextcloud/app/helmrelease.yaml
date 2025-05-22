@@ -82,6 +82,8 @@ spec:
             'enable_previews' => false,
             'trashbin_retention_obligation' => 'auto, 30',
             'auth.bruteforce.protection.enabled' => true,
+            'datadirectory' => '/var/www/html/data',
+
           );
         redis.config.php: |-
           <?php
