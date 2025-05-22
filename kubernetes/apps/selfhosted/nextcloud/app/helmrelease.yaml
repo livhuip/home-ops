@@ -36,9 +36,6 @@ spec:
         gethomepage.dev/group: document
         gethomepage.dev/name: nextcloud
         gethomepage.dev/icon: sh-nextcloud.svg
-        # gethomepage.dev/widget.type: nextcloud
-        # gethomepage.dev/widget.url: https://nextcloud.${SECRET_DOMAIN}
-        # gethomepage.dev/widget.key: "{{ `{{HOMEPAGE_VAR_SVC_NXC_TOKEN}}` }}"
         external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
         nginx.ingress.kubernetes.io/proxy-body-size: "10G"
         nginx.ingress.kubernetes.io/proxy-buffering: "off"
@@ -76,13 +73,6 @@ spec:
     nextcloud:
       host: &host cloud.${SECRET_DOMAIN}
 
-      # podSecurityContext:
-      #   fsGroup: 33
-      # securityContext:
-      #   runAsUser: &uid 33
-      #   runAsGroup: &gid 33
-      #   runAsNonRoot: false
-
       existingSecret:
         enabled: true
         secretName: *secret
@@ -93,7 +83,6 @@ spec:
         smtpPasswordKey: SMTP_PASSWORD
         smtpHostKey: SMTP_HOST
 
-      # datadir: /var/www/data
       datadir: /var/www/data
 
       extraEnv:
@@ -112,21 +101,6 @@ spec:
             secretKeyRef:
               name: *secret
               key: REDIS_DB
-        - name: S3_BUCKET
-          valueFrom:
-            secretKeyRef:
-              name: *secret
-              key: S3_BUCKET
-        - name: S3_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: *secret
-              key: S3_ACCESS_KEY
-        - name: S3_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: *secret
-              key: S3_SECRET_KEY
         - name: OIDC_CLIENT_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -190,7 +164,6 @@ spec:
 
       defaultConfigs:
         redis.config.php: false
-        s3.config.php: false
 
       configs:
         local.config.php: |-
@@ -218,6 +191,7 @@ spec:
             'default_phone_region' => 'US',
             'trashbin_retention_obligation' => 'auto, 30',
             'auth.bruteforce.protection.enabled' => true,
+            'datadirectory' => '/var/www/data',
           );
 
         ingress.config.php: |-
@@ -263,24 +237,6 @@ spec:
             'oidc_login_webdav_enabled' => true,
             'oidc_login_disable_registration' => false,
           );
-        s3.config.php: |-
-          <?php
-          $CONFIG = array (
-            'objectstore' => array(
-              'class' => '\\OC\\Files\\ObjectStore\\S3',
-              'arguments' => array(
-                'hostname'       => 's3.${SECRET_DOMAIN}',
-                'port'           => 443,
-                'use_path_style' => true,
-                'bucket'         => getenv('S3_BUCKET'),
-                'autocreate'     => false,
-                'region'     => 'us-east-1',
-                'key'            => getenv('S3_ACCESS_KEY'),
-                'secret'         => getenv('S3_SECRET_KEY'),
-                'use_ssl'        => true,
-              ),
-            ),
-          );
 
       phpConfigs:
         uploadLimit.ini: |
@@ -300,56 +256,6 @@ spec:
           pm.max_spare_servers = 42
           pm.max_requests = 500
           pm.process_idle_timeout = 10s
-        # www.conf: |
-        #   [www]
-        #   user = www-data
-        #   group = www-data
-        #   listen = 127.0.0.1:9000
-        #   pm = dynamic
-        #   pm.max_children = 57
-        #   pm.start_servers = 14
-        #   pm.min_spare_servers = 14
-      #     pm.max_spare_servers = 42
-      #     pm.max_requests = 500
-      #     pm.process_idle_timeout = 10s
-      # hooks:
-      #   post-installation: |-
-      #     printf "Add missing DB indices\n"
-      #     php occ db:add-missing-indices
-      #   # before-starting: |-
-      #   #   # disable unneceserry apps
-      #   #   for appname in activity circles systemtags federation privacy \
-      #   #       nextcloud_announcements announcementcenter support survey_client \
-      #   #       user_status weather_status dashboard
-      #   #     do
-      #   #     php occ app:disable "$appname"
-      #   #   done
-      #   before-starting: |-
-      #     # Check if Nextcloud is installed before disabling apps
-      #     if php occ status | grep -q "installed: true"; then
-      #       # disable unnecessary apps
-      #       for appname in activity circles systemtags federation privacy \
-      #           nextcloud_announcements announcementcenter support survey_client \
-      #           user_status weather_status dashboard
-      #         do
-      #         php occ app:disable "$appname"
-      #       done
-      #     else
-      #       echo "Nextcloud is not yet installed. Skipping app disabling."
-      #       exit 0
-      #     fi
-
-      #   post-upgrade: |-
-      #     # based on https://github.com/nextcloud/all-in-one/blob/25c580bca370eaead5f1fad9d3842a9c49562dff/Containers/nextcloud/entrypoint.sh#L451-L457
-      #     php occ maintenance:repair --include-expensive
-      #     php occ db:add-missing-indices
-      #     php occ db:add-missing-columns
-      #     php occ db:add-missing-primary-keys
-
-      # securityContext:
-      #   runAsUser: *uid
-      #   runAsGroup: *gid
-      #   runAsNonRoot: true
 
     internalDatabase:
       enabled: false
@@ -372,6 +278,7 @@ spec:
       nextcloudData:
         enabled: true
         existingClaim: nextcloud-data
+        mountPath: /var/www/data
 
     cronjob:
       enabled: true
