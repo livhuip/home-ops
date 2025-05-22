@@ -88,9 +88,9 @@ spec:
       databases:
         - nextcloud-1
       password: *password
-    - name: "nextcloud-0"
+    - name: "nextcloud"
       databases:
-        - nextcloud-0
+        - nextcloud
       password: *password
     - name: "miniflux"
       databases:
