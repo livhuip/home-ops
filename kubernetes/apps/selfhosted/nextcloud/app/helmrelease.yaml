@@ -217,3 +217,6 @@ spec:
       config:
         enabled: true
         existingClaim: *app
+      data:
+        enabled: true
+        existingClaim: nextcloud-data
