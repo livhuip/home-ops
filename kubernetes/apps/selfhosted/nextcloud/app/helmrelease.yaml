@@ -207,6 +207,8 @@ spec:
       config:
         enabled: true
         existingClaim: *app
-      # data:
-      #   enabled: true
+        # subPath: ""
+        # dataEnabled: false
+      data:
+        enabled: false
       #   existingClaim: nextcloud-data
