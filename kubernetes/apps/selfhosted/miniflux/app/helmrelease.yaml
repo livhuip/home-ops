@@ -61,7 +61,8 @@ spec:
               OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://sso.${SECRET_DOMAIN}/application/o/miniflux/
 
               CREATE_ADMIN: "1"
-              DEBUG: "1"
+              LOG_LEVEL: "1"
+              # DEBUG: "1"
               LOG_DATE_TIME: "1"
               POLLING_SCHEDULER: entry_frequency
               POLLING_FREQUENCY: "15"
