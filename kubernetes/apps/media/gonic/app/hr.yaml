@@ -43,9 +43,9 @@ spec:
               tag: v0.16.4@sha256:22e2c9de7a95606f196e1828e6ba0224aa29245cba42cb19eeb4322f6dae4c7b
             env:
               GONIC_SCAN_INTERVAL: "120"
-              GONIC_PLAYLISTS_PATH: /Media/music/gonic/playlists
-              GONIC_MUSIC_PATH: /Media/music/downloads
-              GONIC_PODCAST_PATH: /Media/music/gonic/podcasts
+              GONIC_PLAYLISTS_PATH: /Media/playlists
+              GONIC_MUSIC_PATH: /Media/chrisadmin/files/Music
+              GONIC_PODCAST_PATH: /Media/podcasts
             resources:
               requests:
                 cpu: 15m
