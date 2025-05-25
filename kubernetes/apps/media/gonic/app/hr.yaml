@@ -85,6 +85,6 @@ spec:
         enabled: true
         type: nfs
         server: "${NAS_IP}"
-        path: "/mnt/datastore/mediacentre"
+        path: "/mnt/datastore/nexttcloud"
         globalMounts:
           - path: /Media
