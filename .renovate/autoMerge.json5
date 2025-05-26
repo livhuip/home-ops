@@ -54,7 +54,9 @@
         "prometheus-blackbox-exporter",
         "descheduler",
         "tailscale-operator",
-        "syncthing/syncthing"
+        "syncthing/syncthing",
+        "loki"
+
         ],
       automerge: true,
       automergeType: "pr",
