@@ -8,7 +8,7 @@ spec:
   interval: 1h
   dependsOn:
     - name: rook-ceph-cluster
-      namespace: rook-ceph-external
+      namespace: rook-ceph
   chart:
     spec:
       chart: app-template

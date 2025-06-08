@@ -145,8 +145,8 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: ceph-rbd
+              storageClassName: ceph-block
               resources:
                 requests:
-                  storage: 75Gi
+                  storage: 80Gi
         walCompression: true
