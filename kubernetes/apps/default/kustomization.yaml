@@ -7,11 +7,11 @@ components:
   - ../../components/common
   - ../../components/repos/app-template
 resources:
-  - ./echo/ks.yaml
-  # - ./smtp-relay/ks.yaml
-  - ./searxng/ks.yaml
+  # - ./echo/ks.yaml
+  - ./smtp-relay/ks.yaml
+  # - ./searxng/ks.yaml
   - ./portainer/ks.yaml
-  # - ./it-tools/ks.yaml
-  # - ./vaultwarden/ks.yaml
-  # - ./rustdesk/ks.yaml
-  # - ./openspeedtest/ks.yaml
+  - ./it-tools/ks.yaml
+  - ./vaultwarden/ks.yaml
+  - ./rustdesk/ks.yaml
+  - ./openspeedtest/ks.yaml
