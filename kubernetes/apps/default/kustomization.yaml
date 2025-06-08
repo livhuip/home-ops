@@ -10,7 +10,7 @@ resources:
   - ./echo/ks.yaml
   # - ./smtp-relay/ks.yaml
   - ./searxng/ks.yaml
-  # - ./portainer/ks.yaml
+  - ./portainer/ks.yaml
   # - ./it-tools/ks.yaml
   # - ./vaultwarden/ks.yaml
   # - ./rustdesk/ks.yaml
