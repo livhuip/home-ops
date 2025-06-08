@@ -8,15 +8,15 @@ resources:
   # - ./gatus/ks.yaml
   # - ./alertmanager/ks.yaml
   # - ./blackbox-exporter/ks.yaml
-  - ./grafana/ks.yaml
+  # - ./grafana/ks.yaml
   # - ./kromgo/ks.yaml
-  - ./kube-state-metrics/ks.yaml
+  # - ./kube-state-metrics/ks.yaml
   # - ./kube-prometheus-stack/ks.yaml
   # - ./loki/ks.yaml
-  - ./node-exporter/ks.yaml
-  - ./prometheus-operator/ks.yaml
+  # - ./node-exporter/ks.yaml
+  # - ./prometheus-operator/ks.yaml
   # - ./promtail/ks.yaml
-  - ./silence-operator/ks.yaml
+  # - ./silence-operator/ks.yaml
   # - ./smartctl-exporter/ks.yaml
   # - ./unpoller/ks.yaml
   # - ./speedtest-exporter/ks.yaml
