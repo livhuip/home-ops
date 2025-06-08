@@ -71,7 +71,7 @@ spec:
       storage:
         useAllNodes: true
         useAllDevices: false
-        devicePathFilter: /dev/disk/by-id/nvme-(nvme-HP_SSD_EX900_Pro_256GB_HBSE21130100068|nvme-Micron_MTFDHBA512QFD_21192ED7DB11|nvme-THNSN5512GPUK_NVMe_TOSHIBA_512GB_47KS100CTATT)
+        devicePathFilter: /dev/nvme1n1
         config:
           osdsPerDevice: "1"
     cephBlockPools:
