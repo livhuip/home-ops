@@ -10,11 +10,11 @@ resources:
   # Flux-Kustomizations
   - ./crunchy-postgres-operator/ks.yaml
   - ./dragonfly/ks.yaml
-  - ./pgadmin/ks.yaml
+  # - ./pgadmin/ks.yaml
   # - ./redis/ks.yaml
   - ./cloudnative-pg/ks.yaml
   # - ./emqx/ks.yaml
-  - ./influx/ks.yaml
+  # - ./influx/ks.yaml
 components:
   - ../../components/common
   - ../../components/repos/app-template
