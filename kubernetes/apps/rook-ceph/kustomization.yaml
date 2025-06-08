@@ -4,9 +4,3 @@ kind: Kustomization
 namespace: rook-ceph
 resources:
   - ./rook-ceph/ks.yaml
-components:
-  - ../../../shared/meta/components/alerts
-  - ../../../shared/meta/components/namespace
-  - ../../../shared/meta/components/repos
-  - ../../../shared/meta/components/sops
-  - ../../../shared/meta/components/substitutions
