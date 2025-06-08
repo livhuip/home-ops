@@ -6,9 +6,9 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/default/portainer/app
-  dependsOn:
-    - name: volsync
-      namespace: storage
+  # dependsOn:
+  #   - name: volsync
+  #     namespace: storage
   components:
     - ../../../../components/volsync
     - ../../../../components/gatus/guarded
