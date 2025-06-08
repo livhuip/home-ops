@@ -4,3 +4,6 @@ kind: Kustomization
 namespace: rook-ceph
 resources:
   - ./rook-ceph/ks.yaml
+components:
+  - ../../components/common
+  # - ../../components/repos/app-template
