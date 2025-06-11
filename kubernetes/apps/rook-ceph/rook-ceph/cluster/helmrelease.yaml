@@ -1,3 +1,111 @@
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: rook-ceph-cluster
+# spec:
+#   interval: 1h
+#   timeout: 15m
+#   chartRef:
+#     kind: OCIRepository
+#     name: rook-ceph-cluster
+#   values:
+#     monitoring:
+#       enabled: true
+#       createPrometheusRules: true
+#     ingress:
+#       dashboard:
+#         ingressClassName: internal
+#         annotations:
+#           hajimari.io/enable: "true"
+#           hajimari.io/appName: "Rook"
+#           hajimari.io/group: "storage"
+#           hajimari.io/icon: mdi:chess-rook
+#           hajimari.io/instance: "admin"
+#         host:
+#           name: &host "rook.${SECRET_DOMAIN}"
+#           path: /
+
+#     configOverride: |
+#       # [global]
+#       bdev_enable_discard = true
+#       bdev_async_discard = true
+
+#     toolbox:
+#       enabled: true
+#     cephClusterSpec:
+#       cephConfig:
+#         global:
+#           bdev_enable_discard: "true" # quote
+#           bdev_async_discard_threads: "1" # quote
+#           osd_class_update_on_start: "false" # quote
+#           device_failure_prediction_mode: local # requires mgr module
+#           mon_data_avail_warn: "20" # 20%
+#       crashCollector:
+#         disable: false
+#       csi:
+#         readAffinity:
+#           enabled: true
+#       dashboard:
+#         enabled: true
+#         urlPrefix: /
+#         ssl: false
+#         prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
+#       mgr:
+#         modules:
+#           - name: diskprediction_local
+#             enabled: true
+#           - name: insights
+#             enabled: true
+#           - name: pg_autoscaler
+#             enabled: true
+#           - name: rook
+#             enabled: true
+#       network:
+#         provider: host
+#         # addressRanges:
+#         #   public: ["${NODE_CIDR}"]
+#         #   cluster: ["${THUNDERBOLT_CIDR}"]
+#         connections:
+#           requireMsgr2: true
+#       storage:
+#         useAllNodes: true
+#         useAllDevices: false
+#         devicePathFilter: /dev/nvme1n1
+#         config:
+#           osdsPerDevice: "1"
+#     cephBlockPools:
+#       - name: ceph-blockpool
+#         spec:
+#           failureDomain: host
+#           replicated:
+#             size: 3
+#         storageClass:
+#           enabled: true
+#           name: ceph-block
+#           isDefault: true
+#           reclaimPolicy: Delete
+#           allowVolumeExpansion: true
+#           volumeBindingMode: Immediate
+#           mountOptions: ["discard"]
+#           parameters:
+#             imageFormat: "2"
+#             imageFeatures: layering,fast-diff,object-map,deep-flatten,exclusive-lock
+#             csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+#             csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+#             csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+#             csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+#             csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+#             csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+#             csi.storage.k8s.io/fstype: ext4
+#     cephBlockPoolsVolumeSnapshotClass:
+#       enabled: true
+#       name: csi-ceph-blockpool
+#       isDefault: true
+#       deletionPolicy: Delete
+#     cephFileSystems: []
+#     cephObjectStores: []
+
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -25,14 +133,81 @@ spec:
         host:
           name: &host "rook.${SECRET_DOMAIN}"
           path: /
-
     configOverride: |
       [global]
       bdev_enable_discard = true
       bdev_async_discard = true
 
+    # ADD THESE RESOURCE CONFIGURATIONS
+    resources:
+      mgr:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 100m # Down from likely 500m+ (you're using ~50m)
+          memory: 512Mi
+      mon:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 100m # Down from likely 500m+ (you're using ~40m)
+          memory: 400Mi
+      osd:
+        limits:
+          cpu: 1000m
+          memory: 4Gi
+        requests:
+          cpu: 100m # Down from likely 1000m+ (you're using ~25m)
+          memory: 2Gi
+      prepareosd:
+        limits:
+          cpu: 500m
+          memory: 400Mi
+        requests:
+          cpu: 50m
+          memory: 200Mi
+      mgr-sidecar:
+        limits:
+          cpu: 500m
+          memory: 100Mi
+        requests:
+          cpu: 50m
+          memory: 50Mi
+      crashcollector:
+        limits:
+          cpu: 500m
+          memory: 100Mi
+        requests:
+          cpu: 10m # These use almost nothing
+          memory: 50Mi
+      logcollector:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      cleanup:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 100Mi
+
     toolbox:
       enabled: true
+      # Resource limits for toolbox
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 10m # Toolbox is rarely used
+          memory: 64Mi
+
     cephClusterSpec:
       cephConfig:
         global:
@@ -46,6 +221,35 @@ spec:
       csi:
         readAffinity:
           enabled: true
+        # CSI resource optimization
+        csiRBDProvisionerResource:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        csiRBDPluginResource:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        csiCephFSProvisionerResource:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
+        csiCephFSPluginResource:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 100Mi
       dashboard:
         enabled: true
         urlPrefix: /
