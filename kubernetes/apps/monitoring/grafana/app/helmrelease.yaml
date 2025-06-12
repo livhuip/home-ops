@@ -338,20 +338,13 @@ spec:
     rbac:
       pspEnabled: false
 
-    # resources:
-    #   limits:
-    #     memory: 512Mi
-    #   requests:
-    #     cpu: 50m
-    #     memory: 128Mi
-
     resources:
       limits:
-        cpu: 500m # Add CPU limit
-        memory: 512Mi # Already set
+        cpu: 700m
+        memory: 512Mi
       requests:
-        cpu: 50m # Already set
-        memory: 128Mi # Already set
+        cpu: 350m
+        memory: 384Mi
 
     serviceAccount:
       create: true
