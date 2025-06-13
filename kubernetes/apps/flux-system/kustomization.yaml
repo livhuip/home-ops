@@ -7,7 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./flux-instance/ks.yaml
-  - ./flux-operator/ks.yaml
+  # - ./flux-operator/ks.yaml
   - ./discord-alert.yml
   - ./discord-provider.yml
   - ./discord-url.secret.sops.yaml
