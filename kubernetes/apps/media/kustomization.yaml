@@ -15,13 +15,13 @@ resources:
   # - ./maintainerr/ks.yaml
   # - ./omegabrr/ks.yaml
   # - ./overseerr/ks.yaml
-  # - ./prowlarr/ks.yaml
+  - ./prowlarr/ks.yaml
   # - ./qbittorrent/ks.yaml
   # - ./pterodactyl/ks.yaml
-  # - ./radarr/ks.yaml
-  # - ./recyclarr/ks.yaml
+  - ./radarr/ks.yaml
+  - ./recyclarr/ks.yaml
   # - ./redlib/ks.yaml
-  # - ./sabnzbd/ks.yaml
-  # - ./sonarr/ks.yaml
+  - ./sabnzbd/ks.yaml
+  - ./sonarr/ks.yaml
   # - ./unpackerr/ks.yaml
-  # - ./gonic/ks.yaml
+  - ./gonic/ks.yaml
