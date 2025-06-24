@@ -163,15 +163,26 @@ spec:
               - path: /meili_data
                 subPath: meilisearch
 
-    route:
+    # route:
+    #   app:
+    #     hostnames:
+    #       - karakeep.${SECRET_DOMAIN}
+    #     parentRefs:
+    #       - name: internal
+    #         namespace: kube-system
+    #         sectionName: https
+    #     rules:
+    #       - backendRefs:
+    #           - identifier: app
+    #             port: *httpPort
+
+    ingress:
       app:
-        hostnames:
-          - karakeep.${SECRET_DOMAIN}
-        parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *httpPort
+        className: internal
+        hosts:
+          - host: "karakeep.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
