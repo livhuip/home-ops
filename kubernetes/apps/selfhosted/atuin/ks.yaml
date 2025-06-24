@@ -10,10 +10,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: crunchy-postgres-cluster
-      namespace: storage
-    - name: onepassword
-      namespace: security
+    - name: crunchy-postgres-operator-cluster
+      namespace: database
     - name: volsync
       namespace: storage
   components:
