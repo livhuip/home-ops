@@ -40,8 +40,9 @@ spec:
       - --pihole-server=https://192.168.86.100:1080
       - --pihole-tls-skip-verify
       - --pihole-api-version=6
+      - --policy=sync
     triggerLoopOnEvent: true
-    policy: "upsert-only"
+    policy: "sync"
     registry: noop
     sources: ["service", "ingress"]
     domainFilters: ["hayani.xyz"]
