@@ -46,16 +46,18 @@ spec:
               ATUIN_HOST: 0.0.0.0
               ATUIN_PORT: &port 80
               ATUIN_OPEN_REGISTRATION: "true"
+              ATUIN_SYNC_ADDRESS: https://sh.hayani.xyz
               TZ: ${TIMEZONE}
               ATUIN_METRICS__ENABLE: "true"
               ATUIN_METRICS__HOST: 0.0.0.0
               ATUIN_METRICS__PORT: &metricsPort 8080
               ATUIN_TLS__ENABLE: "false"
               ATUIN_LOG: debug
+              RUST_LOG: debug
             envFrom: &envFrom
               - secretRef:
                   name: atuin-secret
-            args: [server, start]
+            args: ["atuin", "server", "start"]
             probes:
               liveness: &probes
                 enabled: true
