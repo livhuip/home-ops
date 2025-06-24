@@ -41,7 +41,7 @@ spec:
       - --pihole-tls-skip-verify
       - --pihole-api-version=6
     triggerLoopOnEvent: true
-    policy: upsert-only
+    policy: #upsert-only
     registry: noop
     sources: ["service", "ingress"]
     domainFilters: ["hayani.xyz"]
