@@ -41,6 +41,7 @@ spec:
       # - --pihole-tls-skip-verify
       - --pihole-api-version=6
     triggerLoopOnEvent: true
+    policy: "sync"
     registry: noop
     sources: ["service", "ingress"]
     domainFilters: ["hayani.xyz"]
