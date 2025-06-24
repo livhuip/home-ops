@@ -24,7 +24,7 @@ spec:
 
     controllers:
       karakeep:
-        forceRename: karakeep
+        # forceRename: karakeep
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
