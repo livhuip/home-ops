@@ -42,7 +42,7 @@ spec:
       - --pihole-api-version=6
       - --policy=sync
     triggerLoopOnEvent: true
-    policy: "sync"
+    # policy: "sync"
     registry: noop
     sources: ["service", "ingress"]
     domainFilters: ["hayani.xyz"]
