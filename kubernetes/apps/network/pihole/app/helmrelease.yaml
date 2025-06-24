@@ -40,7 +40,6 @@ spec:
       - --pihole-server=http://192.168.86.100:1080
       # - --pihole-tls-skip-verify
       - --pihole-api-version=6
-      - --policy=sync
     triggerLoopOnEvent: true
     registry: noop
     sources: ["service", "ingress"]
