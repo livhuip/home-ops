@@ -9,7 +9,7 @@ components:
 resources:
   # []
   # - ./actual/ks.yaml
-  # - ./atuin/ks.yaml
+  - ./atuin/ks.yaml
   # - ./gramps/ks.yaml
   # - ./miniflux/ks.yaml
   # - ./n8n/ks.yaml
