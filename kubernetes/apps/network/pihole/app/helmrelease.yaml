@@ -37,7 +37,7 @@ spec:
             key: *name
     extraArgs:
       - --ignore-ingress-tls-spec
-      - --pihole-server=http://192.168.86.100
+      - --pihole-server=http://192.168.86.100:1080
       # - --pihole-tls-skip-verify
       - --pihole-api-version=6
     triggerLoopOnEvent: true
