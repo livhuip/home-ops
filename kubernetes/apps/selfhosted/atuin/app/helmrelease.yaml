@@ -46,7 +46,6 @@ spec:
               ATUIN_HOST: 0.0.0.0
               ATUIN_PORT: &port 80
               ATUIN_OPEN_REGISTRATION: "true"
-              ATUIN_SYNC_ADDRESS: https://sh.hayani.xyz
               TZ: ${TIMEZONE}
               ATUIN_METRICS__ENABLE: "true"
               ATUIN_METRICS__HOST: 0.0.0.0
