@@ -8,7 +8,7 @@ resources:
   - ./gatus/ks.yaml
   - ./alertmanager/ks.yaml
   # - ./blackbox-exporter/ks.yaml
-  - ./grafana/ks.yaml
+  # - ./grafana/ks.yaml
   # - ./kromgo/ks.yaml
   - ./kube-state-metrics/ks.yaml
   - ./kube-prometheus-stack/ks.yaml
