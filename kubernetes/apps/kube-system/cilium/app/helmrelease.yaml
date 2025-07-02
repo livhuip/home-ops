@@ -1,32 +1,73 @@
+# ---
+# # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+# apiVersion: source.toolkit.fluxcd.io/v1
+# kind: HelmRepository
+# metadata:
+#   name: cilium
+#   namespace: kube-system # Required for Renovate lookups
+# spec:
+#   interval: 1h
+#   url: https://helm.cilium.io
+# ---
+# # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+# apiVersion: helm.toolkit.fluxcd.io/v2
+# kind: HelmRelease
+# metadata:
+#   name: cilium
+# spec:
+#   interval: 1h
+#   chart:
+#     spec:
+#       chart: cilium
+#       version: 1.17.5
+#       sourceRef:
+#         kind: HelmRepository
+#         name: cilium
+#         namespace: kube-system
+#   install:
+#     remediation:
+#       retries: 3
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#   valuesFrom:
+#     - kind: ConfigMap
+#       name: cilium-values
+#   values:
+#     operator:
+#       tolerations: []
+
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
   name: cilium
-  namespace: kube-system # Required for Renovate lookups
+  annotations:
+    api.fluxcd.io/upgrade: "v2.6.0"
 spec:
-  interval: 1h
-  url: https://helm.cilium.io
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 1.17.5
+  url: oci://ghcr.io/home-operations/charts-mirror/cilium
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: cilium
 spec:
   interval: 1h
-  chart:
-    spec:
-      chart: cilium
-      version: 1.17.5
-      sourceRef:
-        kind: HelmRepository
-        name: cilium
-        namespace: kube-system
+  chartRef:
+    kind: OCIRepository
+    name: cilium
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
@@ -35,5 +76,29 @@ spec:
     - kind: ConfigMap
       name: cilium-values
   values:
+    hubble:
+      enabled: true
+      metrics:
+        enabled:
+          - dns:query
+          - drop
+          - tcp
+          - flow
+          - port-distribution
+          - icmp
+          - http
+        serviceMonitor:
+          enabled: true
+        dashboards:
+          enabled: true
+      relay:
+        enabled: true
+        rollOutPods: true
+        prometheus:
+          serviceMonitor:
+            enabled: true
+      ui:
+        enabled: true
+        rollOutPods: true
     operator:
       tolerations: []
