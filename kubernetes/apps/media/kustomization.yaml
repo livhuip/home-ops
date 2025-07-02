@@ -15,7 +15,7 @@ resources:
   # - ./maintainerr/ks.yaml
   # - ./omegabrr/ks.yaml
   # - ./overseerr/ks.yaml
-  - ./prowlarr/ks.yaml
+  # - ./prowlarr/ks.yaml
   # - ./qbittorrent/ks.yaml
   # - ./pterodactyl/ks.yaml
   - ./radarr/ks.yaml
