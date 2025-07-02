@@ -9,7 +9,7 @@ resources:
   # - ./namespace.yaml
   # Flux-Kustomizations
   - ./crunchy-postgres-operator/ks.yaml
-  - ./dragonfly/ks.yaml
+  # - ./dragonfly/ks.yaml
   # - ./pgadmin/ks.yaml
   # - ./redis/ks.yaml
   - ./cloudnative-pg/ks.yaml
