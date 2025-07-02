@@ -39,11 +39,12 @@ spec:
       - --ignore-ingress-tls-spec
       - --pihole-server=http://192.168.86.100:1080
       # - --pihole-tls-skip-verify
+      - --gateway-name=internal
       - --pihole-api-version=6
     triggerLoopOnEvent: true
     policy: "upsert-only"
     registry: noop
-    sources: ["service", "ingress"]
+    sources: ["service", "ingress", "gateway-httproute"]
     domainFilters: ["hayani.xyz"]
     serviceMonitor:
       enabled: true
