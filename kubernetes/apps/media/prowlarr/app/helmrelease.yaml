@@ -80,7 +80,6 @@ spec:
         setGateway: "true"
     service:
       app:
-        controller: prowlarr
         ports:
           http:
             port: *port
