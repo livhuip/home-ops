@@ -8,6 +8,17 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  dependsOn:
+    - name: volsync
+      namespace: storage
   values:
     controllers:
       prowlarr:
@@ -58,13 +69,15 @@ spec:
                 memory: 128Mi
               limits:
                 memory: 1024Mi
-        pod:
-          securityContext:
-            runAsUser: 568
-            runAsGroup: 568
-            runAsNonRoot: true
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+      annotations:
+        setGateway: "true"
     service:
       app:
         controller: prowlarr
