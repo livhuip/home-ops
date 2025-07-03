@@ -26,7 +26,7 @@ dashboards:
 endpointRoutes:
   enabled: true
 envoy:
-  rollOutPods: true
+  rollOutPods: false
   prometheus:
     serviceMonitor:
       enabled: true
