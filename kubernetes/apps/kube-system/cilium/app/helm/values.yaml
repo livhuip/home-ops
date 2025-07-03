@@ -25,15 +25,15 @@ dashboards:
 # enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
-# envoy:
-#   rollOutPods: false
-#   prometheus:
-#     serviceMonitor:
-#       enabled: true
-# gatewayAPI:
-#   enabled: true
-#   enableAlpn: true
-#   xffNumTrustedHops: 1
+envoy:
+  rollOutPods: true
+  prometheus:
+    serviceMonitor:
+      enabled: true
+gatewayAPI:
+  enabled: true
+  enableAlpn: true
+  xffNumTrustedHops: 1
 hubble:
   enabled: false
 ipam:
