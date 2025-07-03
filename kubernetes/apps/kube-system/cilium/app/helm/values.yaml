@@ -1,28 +1,28 @@
 ---
 autoDirectNodeRoutes: true
-bandwidthManager:
-  enabled: true
-  bbr: true
+# bandwidthManager:
+#   enabled: true
+#   bbr: true
 bpf:
   masquerade: true
   hostLegacyRouting: true # Restore this for Talos compatibility
-  preallocateMaps: true
-bpfClockProbe: true
+  # preallocateMaps: true
+# bpfClockProbe: true
 bgpControlPlane:
   enabled: false # DISABLED as requested
 cgroup:
   automount:
     enabled: false
   hostRoot: /sys/fs/cgroup
-cluster:
-  id: 1
-  name: main
+# cluster:
+#   id: 1
+#   name: main
 cni:
   exclusive: false
 dashboards:
   enabled: true
-devices: eth+,en+
-enableIPv4BIGTCP: true
+# devices: eth+,en+
+# enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
 envoy:
