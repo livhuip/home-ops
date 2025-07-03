@@ -4,13 +4,12 @@ bandwidthManager:
   enabled: true
   bbr: true
 bpf:
-  datapathMode: netkit
   masquerade: true
+  hostLegacyRouting: true # Restore this for Talos compatibility
   preallocateMaps: true
-  # tproxy: true
 bpfClockProbe: true
 bgpControlPlane:
-  enabled: true
+  enabled: false # DISABLED as requested
 cgroup:
   automount:
     enabled: false
@@ -86,3 +85,5 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
+socketLB:
+  hostNamespaceOnly: true # CRITICAL: Restore this for DNS
