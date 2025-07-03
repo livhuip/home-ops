@@ -1,24 +1,27 @@
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: bazarr
+  name: &app bazarr
 spec:
-  interval: 1h
+  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
   install:
     remediation:
-      retries: -1
+      retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   values:
     controllers:
       bazarr:
+        labels:
+          nfsMount: "true"
+          postgres: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -28,7 +31,6 @@ spec:
               tag: 1.5.2@sha256:dbc87e5ce9e199709188e152e82b3ff5d33e6521a1b3d61e465aa75b4b739e7f
             env:
               TZ: ${TIMEZONE}
-              POSTGRES_ENABLED: "true"
             envFrom:
               - secretRef:
                   name: bazarr-secret
@@ -45,7 +47,7 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-            securityContext:
+            securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
@@ -54,6 +56,21 @@ spec:
                 cpu: 10m
               limits:
                 memory: 1Gi
+          subcleaner:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync
+              tag: v4.4.2@sha256:3089d9787b89bdc5af01d9f6e8d515aefb9672e8aea3972d7ff67478112bacb3
+            env:
+              GITSYNC_REPO: https://github.com/KBlixt/subcleaner
+              GITSYNC_REF: master
+              GITSYNC_PERIOD: 24h
+              GITSYNC_ROOT: /add-ons
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 128Mi
+            securityContext: *securityContext
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -61,6 +78,8 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [10000]
+        seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: bazarr
@@ -69,6 +88,15 @@ spec:
             port: *port
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Downloads
+          gethomepage.dev/name: Bazarr
+          gethomepage.dev/icon: bazarr.png
+          gethomepage.dev/description: Subtitle Downloads
+          gethomepage.dev/widget.type: bazarr
+          gethomepage.dev/widget.url: http://bazarr.downloads:6767
+          gethomepage.dev/widget.key: "{{ `{{HOMEPAGE_VAR_BAZARR_TOKEN}}` }}"
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: internal
@@ -79,21 +107,29 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      config:
-        existingClaim: bazarr
-      config-cache:
+      add-ons:
+        type: emptyDir
+      cache:
         type: emptyDir
         globalMounts:
           - path: /config/cache
-      config-log:
+      config:
+        existingClaim: *app
+      data:
+        type: nfs
+        server: ${NFS_IP}
+        path: "/mnt/datastore/mediacentre"
+        globalMounts:
+          - path: /data
+      log:
         type: emptyDir
         globalMounts:
           - path: /config/log
-      media:
-        type: nfs
-        server: "${NAS_IP}"
-        path: "/mnt/datastore/mediacentre"
+      scripts:
+        type: configMap
+        name: bazarr-scripts
+        defaultMode: 0775
         globalMounts:
-          - path: /media
+          - readOnly: true
       tmp:
         type: emptyDir
