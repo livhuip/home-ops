@@ -117,7 +117,7 @@ spec:
         existingClaim: *app
       data:
         type: nfs
-        server: ${NFS_IP}
+        server: "${NAS_IP}"
         path: "/mnt/datastore/mediacentre"
         globalMounts:
           - path: /data
