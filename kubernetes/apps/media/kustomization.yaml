@@ -22,6 +22,6 @@ resources:
   - ./recyclarr/ks.yaml
   # - ./redlib/ks.yaml
   - ./sabnzbd/ks.yaml
-  - ./sonarr/ks.yaml
+  # - ./sonarr/ks.yaml
   # - ./unpackerr/ks.yaml
   - ./gonic/ks.yaml
