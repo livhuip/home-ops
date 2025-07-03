@@ -120,7 +120,7 @@ spec:
         server: "${NAS_IP}"
         path: "/mnt/datastore/mediacentre"
         globalMounts:
-          - path: /data
+          - path: /Media
       log:
         type: emptyDir
         globalMounts:
