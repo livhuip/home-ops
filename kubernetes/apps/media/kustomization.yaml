@@ -16,6 +16,7 @@ resources:
   # - ./maintainerr/ks.yaml
   # - ./omegabrr/ks.yaml
   - ./jellyseerr/ks.yaml
+  - ./jellystat/ks.yaml
   - ./prowlarr/ks.yaml
   # - ./qbittorrent/ks.yaml
   # - ./pterodactyl/ks.yaml
