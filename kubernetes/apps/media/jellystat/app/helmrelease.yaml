@@ -1,90 +1,81 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://kubernetes-schemas.thesteamedcrab.com/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: jellystat
+  name: &app jellystat
 spec:
-  interval: 1h
+  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
+    namespace: flux-system
+  maxHistory: 3
   install:
+    createNamespace: true
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     controllers:
-      jellystat:
+      main:
+        type: statefulset
+
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-db:
+
+        containers:
+          main:
             image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 17
-            envFrom: &envFrom
+              repository: ghcr.io/cyfershepard/jellystat
+              tag: unstable@sha256:7a2f75389c1b01dbf02f7696717f2547560a54059ff4ce8b88ff4bdeb0e46518
+
+            env:
+              TZ: "${TIMEZONE}"
+              MINIMUM_SECONDS_TO_INCLUDE_PLAYBACK: "30"
+
+            envFrom:
               - secretRef:
                   name: jellystat-secret
-        containers:
-          app:
-            image:
-              repository: docker.io/cyfershepard/jellystat
-              tag: 1.1.6@sha256:683358900cff8d299fa93add731b2976d7c9bc49f9593f40f5351498fd488767
-            env:
-              TZ: Europe/Oslo
-            envFrom: *envFrom
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
-            probes:
-              liveness:
-                enabled: true
-              readiness:
-                enabled: true
-              startup:
-                enabled: true
-                spec:
-                  failureThreshold: 30
-                  periodSeconds: 5
+              - secretRef:
+                  name: jellystat-db-secret
+
             resources:
               requests:
                 cpu: 10m
+                memory: 250Mi
               limits:
-                memory: 500Mi
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
+                memory: 1Gi
+
     service:
-      app:
-        controller: jellystat
+      main:
+        controller: main
         ports:
           http:
             port: &port 3000
+
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.rodent.cc"
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
           - name: internal
-            namespace: kube-system
+            namespace: network
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
+              - name: *app
                 port: *port
+
     persistence:
       backup:
         type: emptyDir
         advancedMounts:
-          jellystat:
-            app:
+          main:
+            main:
               - path: /app/backend/backup-data

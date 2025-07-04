@@ -27,7 +27,7 @@ spec:
               repository: ghcr.io/fallenbagel/jellyseerr
               tag: 2.7.0@sha256:3ec2ce92445719ea1e610b3e758da20cd317c8e1028fc810d001b1370a339226
             env:
-              TZ: Europe/Oslo
+              TZ: ${TIMEZONE}
               LOG_LEVEL: "info"
               PORT: &port 80
             envFrom:
@@ -72,7 +72,7 @@ spec:
       app:
         hostnames:
           - "{{ .Release.Name }}.${SECRET_DOMAIN}"
-          - requests.hayni.xyz
+          - requests.hayani.xyz
         parentRefs:
           - name: external
             namespace: kube-system
