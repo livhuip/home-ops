@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: jellyseerr
+  name: &app jellyseerr
 spec:
   interval: 1h
   chartRef:
@@ -71,8 +71,8 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.rodent.cc"
-          - requests.rodent.cc
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - requests.hayni.xyz
         parentRefs:
           - name: external
             namespace: kube-system
@@ -83,7 +83,7 @@ spec:
                 port: *port
     persistence:
       config:
-        existingClaim: jellyseerr
+        existingClaim: *app
         globalMounts:
           - path: /app/config
       config-cache:
