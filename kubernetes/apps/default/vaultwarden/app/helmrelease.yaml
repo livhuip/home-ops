@@ -65,30 +65,30 @@ spec:
         ports:
           http:
             port: &port 80
-    # ingress:
-    #   app:
-    #     className: external
-    #     annotations:
-    #       external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-    #     hosts:
-    #       - host: vaultwarden.${SECRET_DOMAIN} #"{{ .Release.Name }}.${SECRET_DOMAIN}"
-    #         paths:
-    #           - path: /
-    #             service:
-    #               identifier: app
-    #               port: http
-
-    route:
+    ingress:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: vaultwarden.${SECRET_DOMAIN} #"{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+    # route:
+    #   app:
+    #     hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+    #     parentRefs:
+    #       - name: external
+    #         namespace: kube-system
+    #         sectionName: https
+    #     rules:
+    #       - backendRefs:
+    #           - identifier: app
+    #             port: *port
 
     persistence:
       config:
