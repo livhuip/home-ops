@@ -7,4 +7,4 @@ resources:
   - ./gateway-external.yaml
   - ./gateway-internal.yaml
   - ./redirect.yaml
-  # - ./pushsecret.yaml
+  - ./pushsecret.yaml
