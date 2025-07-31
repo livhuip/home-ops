@@ -101,4 +101,17 @@ spec:
         enabled: true
         rollOutPods: true
     operator:
-      tolerations: []
+      # tolerations: []
+      prometheus:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+      dashboards:
+        enabled: true
+    prometheus:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        trustCRDsExist: true
+    dashboards:
+      enabled: true
