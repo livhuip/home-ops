@@ -8,7 +8,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: lldap-bootstrap
-          image: lldap/lldap:v0.6.1
+          image: lldap/lldap:v0.6.2
 
           command:
             - /bootstrap/bootstrap.sh
