@@ -18,7 +18,7 @@ resources:
   - ./promtail/ks.yaml
   # - ./silence-operator/ks.yaml
   # - ./smartctl-exporter/ks.yaml
-  # - ./unpoller/ks.yaml
+  - ./unpoller/ks.yaml
   # - ./speedtest-exporter/ks.yaml
   - ./pihole/ks.yaml
   - ./kubernetes-dashboard/ks.yaml
