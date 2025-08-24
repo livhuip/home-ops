@@ -112,7 +112,7 @@ spec:
         disable: false
       csi:
         readAffinity:
-          enabled: true
+          # enabled: true
           crushLocationLabels: []
         # CSI resource optimization
         csiRBDProvisionerResource:
