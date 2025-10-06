@@ -108,7 +108,7 @@ spec:
       data:
         enabled: true
         type: nfs
-        server: "${NAS_IP}"
+        server: "10.0.10.200"
         path: "/mnt/datastore/k3sdata/minio"
         globalMounts:
           - path: /data #
