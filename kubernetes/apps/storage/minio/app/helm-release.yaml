@@ -111,4 +111,4 @@ spec:
         server: "${NAS_IP}"
         path: "/mnt/datastore/k3sdata/minio"
         globalMounts:
-          - path: /data
+          - path: /data #
