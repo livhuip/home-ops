@@ -5,7 +5,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
   # []
-  - ./gatus/ks.yaml
+  # - ./gatus/ks.yaml
   - ./alertmanager/ks.yaml
   # - ./blackbox-exporter/ks.yaml
   - ./grafana/ks.yaml
