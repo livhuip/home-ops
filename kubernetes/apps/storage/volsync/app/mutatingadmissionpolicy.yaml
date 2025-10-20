@@ -98,7 +98,7 @@ spec:
               value: Object.spec.template.spec.volumes{
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
-                  server: ${NAS_IP},
+                  server: "10.0.10.200",
                   path: "/mnt/datastore/kubebackup/volsync"
                 }
               }
