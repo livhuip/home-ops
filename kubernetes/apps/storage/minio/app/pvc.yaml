@@ -11,7 +11,7 @@ spec:
   storageClassName: minio-nfs
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    server: "192.168.86.200"
+    server: "10.0.10.200"
     path: "/mnt/datastore/k3sdata/minio"
   mountOptions:
     - nfsvers=4.2
