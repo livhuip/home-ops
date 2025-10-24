@@ -36,3 +36,4 @@ resources:
   - ./kubernetes-dashboard.yaml
   - ./authentik.yaml
   - ./tailscale.yaml
+  - ./newt.yaml
