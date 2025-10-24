@@ -17,7 +17,7 @@ spec:
       # version: 1.0.59
       sourceRef:
         kind: HelmRepository
-        name: newt
+        name: fossorial
         namespace: flux-system
   # values:
   #   persistence:
