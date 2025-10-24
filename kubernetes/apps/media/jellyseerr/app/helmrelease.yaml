@@ -65,6 +65,8 @@ spec:
     service:
       app:
         controller: jellyseerr
+        type: LoadBalancer
+        loadBalancerIP: "10.0.10.20"
         ports:
           http:
             port: *port
