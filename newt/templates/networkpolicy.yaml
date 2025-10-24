@@ -1,0 +1,54 @@
+{{- if .Values.global.networkPolicy.create }}
+{{- if .Values.global.networkPolicy.defaultDenyIngress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "newt.fullname" . }}-default-deny
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: newt
+  policyTypes:
+    - Ingress
+  ingress: []
+{{- end }}
+{{- range $i, $inst := .Values.newtInstances }}
+{{- $accept := default false $inst.acceptClients -}}
+{{- $svc := (default (dict) $inst.service) -}}
+{{- $svcEnabled := default true $svc.enabledWhenAcceptClients -}}
+{{- if and $inst.enabled $accept $svcEnabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "newt.instance.fullname" (dict "root" $ "inst" $inst) }}-ingress
+  labels:
+    {{- include "newt.labels" $ | nindent 4 }}
+    newt.instance: {{ $inst.name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      newt.instance: {{ $inst.name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - {{- if $svc.loadBalancerSourceRanges }}
+      from:
+        {{- range $cidr := $svc.loadBalancerSourceRanges }}
+        - ipBlock:
+            cidr: {{ $cidr | quote }}
+        {{- end }}
+      {{- end }}
+      ports:
+        - port: {{ default 51820 $svc.port }}
+          protocol: UDP
+        - port: {{ default 51821 $svc.testerPort }}
+          protocol: UDP
+{{- end }}
+{{- end }}
+{{- end }}

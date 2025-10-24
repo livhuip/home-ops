@@ -27,17 +27,17 @@ spec:
           ephemeral-storage: "256Mi"
     newtInstances:
       - name: "main-tunnel"
+        enabled: true # ← ADD THIS LINE!
         allowGlobalOverride: false
         auth:
-          existingSecretName: "" # Keep empty for inline credentials
+          existingSecretName: ""
           keys:
-            endpointKey: "PANGOLIN_ENDPOINT" # These should be key names
+            endpointKey: "PANGOLIN_ENDPOINT"
             idKey: "NEWT_ID"
             secretKey: "NEWT_SECRET"
-        # Put the actual values here:
         pangolinEndpoint: "https://pangolin.hayani.xyz"
-        id: "o1dmghwxl799mca" # Your actual ID goes here
-        secret: "256t2np06yomo9h3vxrm41djk8gdtlk1op08ai2ptlco6sly" # Your actual secret goes here
+        id: "o1dmghwxl799mca"
+        secret: "256t2np06yomo9h3vxrm41djk8gdtlk1op08ai2ptlco6sly"
         healthFile: "/tmp/healthy"
         logLevel: "INFO"
         mtu: 1280

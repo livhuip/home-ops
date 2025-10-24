@@ -1,0 +1,51 @@
+{{- $gm := (default (dict) .Values.global.metrics) -}}
+{{- $tm := (default (dict) .Values.metrics) -}}
+{{- $m := mergeOverwrite (deepCopy $gm) $tm -}}
+{{- if and $m.enabled $m.service.enabled }}
+{{- range $i, $inst := .Values.newtInstances }}
+{{- if $inst.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "newt.instance.fullname" (dict "root" . "inst" $inst) }}-metrics
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+    app.kubernetes.io/component: metrics
+    newt.instance: {{ $inst.name }}
+    {{- /* Global extra labels for external Services */}}
+    {{- range $k,$v := .Values.global.additionalServiceLabels }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+  {{- $anns := dict }}
+  {{- range $k,$v := .Values.global.additionalAnnotations }}
+  {{- $_ := set $anns $k (printf "%v" $v) }}
+  {{- end }}
+  {{- range $k,$v := .Values.global.additionalServiceAnnotations }}
+  {{- $_ := set $anns $k (printf "%v" $v) }}
+  {{- end }}
+  {{- $svcAnns := .Values.global.metrics.service.annotations | default (dict) -}}
+  {{- range $k,$v := $svcAnns }}
+  {{- $_ := set $anns $k (printf "%v" $v) }}
+  {{- end }}
+  {{- if gt (len $anns) 0 }}
+  annotations:
+    {{- toYaml $anns | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ $m.service.type | default "ClusterIP" }}
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    newt.instance: {{ $inst.name }}
+  ports:
+    - name: {{ $m.service.portName | default "metrics" }}
+      port: {{ $m.service.port | default 9090 }}
+      {{- if $m.targetPortName }}
+      targetPort: {{ $m.targetPortName }}
+      {{- else }}
+      targetPort: {{ $m.port | default 9090 }}
+      {{- end }}
+      protocol: TCP
+{{- end }}
+{{- end }}
+{{- end }}

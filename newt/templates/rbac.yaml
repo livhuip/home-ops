@@ -1,0 +1,46 @@
+{{- if .Values.rbac.create }}
+{{- $ns := include "newt.namespace" . -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ ternary "ClusterRole" "Role" .Values.rbac.clusterRole }}
+metadata:
+  name: {{ include "newt.fullname" . }}
+  {{- if not .Values.rbac.clusterRole }}
+  namespace: {{ $ns }}
+  {{- end }}
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+  {{- with .Values.rbac.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.rbac.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get","list","watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ ternary "ClusterRoleBinding" "RoleBinding" .Values.rbac.clusterRole }}
+metadata:
+  name: {{ include "newt.fullname" . }}
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+  {{- with .Values.rbac.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.rbac.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "newt.serviceAccountName" . }}
+    namespace: {{ $ns }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: {{ ternary "ClusterRole" "Role" .Values.rbac.clusterRole }}
+  name: {{ include "newt.fullname" . }}
+{{- end }}
+

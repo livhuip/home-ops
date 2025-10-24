@@ -1,0 +1,56 @@
+{{- $gm := (default (dict) .Values.global.metrics) -}}
+{{- $tm := (default (dict) .Values.metrics) -}}
+{{- $m := mergeOverwrite (deepCopy $gm) $tm -}}
+{{- if and $m.enabled $m.podMonitor.enabled $m.serviceMonitor.enabled -}}
+{{- fail "Either metrics.podMonitor.enabled or metrics.serviceMonitor.enabled can be enabled at a time, but not both." -}}
+{{- end }}
+{{- if and $m.enabled $m.serviceMonitor.enabled (not $m.service.enabled) -}}
+{{- fail "metrics.service.enabled must be true when metrics.serviceMonitor.enabled is true, because ServiceMonitor targets a Service port." -}}
+{{- end }}
+{{- if and $m.enabled $m.serviceMonitor.enabled }}
+apiVersion: {{ $m.serviceMonitor.apiVersion | default "monitoring.coreos.com/v1" }}
+kind: ServiceMonitor
+metadata:
+  name: {{ include "newt.fullname" . }}
+  {{- with .Values.global.metrics.serviceMonitor.namespace }}
+  {{- if . }}
+  namespace: {{ . }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+    {{- with .Values.global.metrics.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+    - interval: {{ .Values.global.metrics.serviceMonitor.interval | default "30s" }}
+      {{- with .Values.global.metrics.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ . }}
+      {{- end }}
+      honorLabels: true
+      port: {{ default (default "metrics" $m.portName) $m.service.portName }}
+      scheme: {{ $m.serviceMonitor.scheme | default "http" }}
+      {{- with .Values.global.metrics.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.global.metrics.serviceMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  jobLabel: {{ default "app.kubernetes.io/name" $m.serviceMonitor.jobLabel | quote }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ include "newt.name" . }}
+      app.kubernetes.io/component: metrics
+  namespaceSelector:
+    matchNames:
+      - {{ include "newt.namespace" . }}
+  {{- with $m.serviceMonitor.targetLabels }}
+  targetLabels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  sampleLimit: {{ $m.serviceMonitor.sampleLimit | default 0 }}
+{{- end }}

@@ -1,0 +1,29 @@
+{{- if .Values.global.podDisruptionBudget.enabled }}
+{{- range $i, $inst := .Values.newtInstances }}
+{{- if $inst.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "newt.instance.fullname" (dict "root" $ "inst" $inst) }}-pdb
+  labels:
+    {{- include "newt.labels" $ | nindent 4 }}
+    newt.instance: {{ $inst.name }}
+  {{- with $.Values.global.podDisruptionBudget.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $.Values.global.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  {{- with $.Values.global.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      newt.instance: {{ $inst.name }}
+{{- end }}
+{{- end }}
+{{- end }}

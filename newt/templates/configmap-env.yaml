@@ -1,0 +1,21 @@
+{{- $root := . -}}
+{{- range $i, $inst := .Values.newtInstances }}
+{{- if and $inst.enabled $inst.extraEnv (gt (len $inst.extraEnv) 0) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "newt.instance.fullname" (dict "root" $root "inst" $inst) }}-env
+  labels:
+    {{- include "newt.labels" $root | nindent 4 }}
+    newt.instance: {{ $inst.name }}
+  {{- with $root.Values.global.additionalAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{- range $k,$v := $inst.extraEnv }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

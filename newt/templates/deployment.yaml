@@ -1,0 +1,301 @@
+{{- $root := . -}}
+{{- range $index, $inst := .Values.newtInstances }}
+{{- if $inst.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "newt.instance.fullname" (dict "root" $root "inst" $inst) }}
+  labels:
+  {{- include "newt.labels" $root | nindent 4 }}
+  {{- $md := dict "newt.instance" $inst.name "app.kubernetes.io/component" "newt" }}
+  {{- toYaml $md | nindent 4 }}
+  {{- range $k, $v := $root.Values.global.deploymentLabels }}
+    {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- /* Merge top-level annotations from global */}}
+  {{- $topAnns := dict }}
+  {{- range $k, $v := $root.Values.global.additionalAnnotations }}
+  {{- $_ := set $topAnns $k (printf "%v" $v) }}
+  {{- end }}
+  {{- range $k, $v := $root.Values.global.deploymentAnnotations }}
+  {{- $_ := set $topAnns $k (printf "%v" $v) }}
+  {{- end }}
+  {{- if gt (len $topAnns) 0 }}
+  annotations:
+    {{- toYaml $topAnns | nindent 4 }}
+  {{- end }}
+spec:
+  revisionHistoryLimit: {{ $root.Values.global.revisionHistoryLimit | default 3 }}
+  replicas: {{ $inst.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      newt.instance: {{ $inst.name }}
+  template:
+    metadata:
+      labels:
+  {{- $pl := dict "app.kubernetes.io/instance" $root.Release.Name "newt.instance" $inst.name "app.kubernetes.io/component" "newt" }}
+  {{- toYaml $pl | nindent 8 }}
+  {{- /* Metrics alias map (top-level metrics overrides global.metrics) */}}
+  {{- $gm := (default (dict) $root.Values.global.metrics) -}}
+  {{- $tm := (default (dict) $root.Values.metrics) -}}
+  {{- $m := mergeOverwrite (deepCopy $gm) $tm -}}
+  {{- range $k, $v := $root.Values.global.additionalLabels }}
+        {{ $k }}: {{ $v | quote }}
+  {{- end }}
+  {{- range $k, $v := $root.Values.global.podLabels }}
+        {{ $k }}: {{ $v | quote }}
+  {{- end }}
+      {{- /* Build annotations in a temp dict, then emit only if non-empty */}}
+      {{- $anns := dict }}
+  {{- range $k, $v := $root.Values.global.podAnnotations }}
+      {{- $_ := set $anns $k (printf "%v" $v) }}
+      {{- end }}
+      {{- /* Default Prometheus annotations if enabled and none provided */}}
+      {{- if and $m.enabled (not $m.annotations) }}
+      {{- $_ := set $anns "prometheus.io/scrape" "true" }}
+      {{- $_ := set $anns "prometheus.io/port" (printf "%v" ($m.port | default 9090)) }}
+      {{- $_ := set $anns "prometheus.io/path" (printf "%v" ($m.path | default "/metrics")) }}
+      {{- end }}
+      {{- range $k,$v := $m.annotations }}
+      {{- $_ := set $anns $k (printf "%v" $v) }}
+      {{- end }}
+      {{- if gt (len $anns) 0 }}
+      annotations:
+        {{- toYaml $anns | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- $ips := include "newt.imagePullSecrets" $root -}}
+      {{- if $ips }}
+{{ $ips | nindent 6 }}
+      {{- end }}
+      {{- if or $root.Values.serviceAccount.create $root.Values.serviceAccount.name }}
+      serviceAccountName: {{ include "newt.serviceAccountName" $root }}
+      {{- end }}
+      {{- with $root.Values.global.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      automountServiceAccountToken: {{ default false $root.Values.serviceAccount.automountServiceAccountToken }}
+      {{- /* Pod-level securityContext: instance override only when allowed, else use global if provided */}}
+      {{- $canOverride := (default false $inst.allowGlobalOverride) }}
+      {{- if and $canOverride $inst.podSecurityContext }}
+      securityContext:
+        {{- toYaml $inst.podSecurityContext | nindent 8 }}
+      {{- else if $root.Values.global.podSecurityContext }}
+      securityContext:
+        {{- toYaml $root.Values.global.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- if and $inst.useNativeInterface $root.Values.global.nativeMode.enabled $inst.hostNetwork }}
+      hostNetwork: true
+      {{- end }}
+      {{- if and $inst.useNativeInterface $root.Values.global.nativeMode.enabled $inst.hostPID }}
+      hostPID: true
+      {{- end }}
+      {{- with $inst.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: newt
+          image: {{ include "newt.image" $root }}
+            {{- $g := $root.Values.global.image -}}
+            {{- $l := $root.Values.image -}}
+            {{- $digest := default (default "" $l.digest) $g.digest -}}
+            {{- $tag := default (default $root.Chart.AppVersion $l.tag) $g.tag -}}
+            {{- if and (eq (trim $tag) "latest") (not $digest) }}
+            # WARNING: Do not use 'latest' tag for production deployments!
+            {{- end }}
+          imagePullPolicy: {{ include "newt.imagePullPolicy" $root }}
+          {{- /* Container-level securityContext: native mode takes precedence; otherwise allow instance override only when allowed, else use global; else default */}}
+          {{- if and $inst.useNativeInterface $root.Values.global.nativeMode.enabled }}
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
+                - SYS_MODULE
+          {{- else if and $canOverride $inst.securityContext }}
+          securityContext:
+            {{- toYaml $inst.securityContext | nindent 12 }}
+          {{- else if $root.Values.global.securityContext }}
+          securityContext:
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
+          {{- else }}
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+            readOnlyRootFilesystem: false
+          {{- end }}
+          {{- if not $inst.useCommandArgs }}
+          env:
+            {{- include "newt.instance.env" (dict "root" $root "inst" $inst) | trim | nindent 12 }}
+          {{- else }}
+          {{- include "newt.instance.commandArgs" (dict "root" $root "inst" $inst) | nindent 10 }}
+          env:
+            {{- $auth := default (dict) $inst.auth }}
+            {{- $existing := get $auth "existingSecretName" }}
+            {{- if $existing }}
+            {{- $keys := (default dict (get $auth "keys")) -}}
+            {{- $endpointKey := (default "PANGOLIN_ENDPOINT" $keys.endpointKey) -}}
+            {{- $idKey := (default "NEWT_ID" $keys.idKey) -}}
+            {{- $secretKey := (default "NEWT_SECRET" $keys.secretKey) -}}
+            - name: PANGOLIN_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $existing }}
+                  key: {{ $endpointKey }}
+            - name: NEWT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $existing }}
+                  key: {{ $idKey }}
+            - name: NEWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $existing }}
+                  key: {{ $secretKey }}
+            {{- else if $inst.secret }}
+            - name: NEWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "newt.instance.fullname" (dict "root" $root "inst" $inst) }}
+                  key: NEWT_SECRET
+            {{- end }}
+            {{- include "newt.instance.extraEnv" (dict "root" $root "inst" $inst) | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: wg
+              containerPort: 51820
+              protocol: UDP
+            - name: tester
+              containerPort: 51821
+              protocol: UDP
+            {{- if $m.enabled }}
+            - name: {{ $m.portName | default "metrics" }}
+              containerPort: {{ $m.port | default 9090 }}
+              protocol: TCP
+            {{- end }}
+          {{- /* Emit volumeMounts only if we have any */}}
+          {{- $hasDockerMount := and (kindIs "map" $inst.dockerSocket) $inst.dockerSocket.enabled }}
+          {{- $hasMtlsMount := and (kindIs "map" $inst.mtls) $inst.mtls.enabled (or (not $inst.mtls.secretName) $inst.mtls.secretName) }}
+          {{- $hasUpdownMount := and (kindIs "map" $inst.updown) $inst.updown.enabled }}
+          {{- $hasExtraMounts := gt (len (default (list) $inst.extraVolumeMounts)) 0 }}
+          {{- if or $hasDockerMount $hasMtlsMount $hasUpdownMount $hasExtraMounts }}
+          volumeMounts:
+            {{- if and (kindIs "map" $inst.dockerSocket) $inst.dockerSocket.enabled (not $inst.useNativeInterface) }}
+            - name: docker-socket
+              mountPath: {{ $inst.dockerSocket.path }}
+              readOnly: true
+            {{- else if and (kindIs "map" $inst.dockerSocket) $inst.dockerSocket.enabled }}
+            - name: docker-socket
+              mountPath: {{ $inst.dockerSocket.path }}
+            {{- end }}
+            {{ if and (kindIs "map" $inst.mtls) $inst.mtls.enabled (or (not $inst.mtls.secretName) $inst.mtls.secretName) }}
+            {{- $cp := ternary $inst.mtls.certPath "/certs/client.p12" (and (kindIs "map" $inst.mtls) (kindIs "string" $inst.mtls.certPath) (ne $inst.mtls.certPath "")) -}}
+            - name: mtls-cert
+              mountPath: {{ dir $cp | quote }}
+              readOnly: true
+            {{- end }}
+            {{- if and (kindIs "map" $inst.updown) $inst.updown.enabled }}
+            - name: updown-script
+              mountPath: {{ default "/opt/newt/updown" $inst.updown.mountPath }}
+            {{- end }}
+            {{- range $inst.extraVolumeMounts }}
+            - {{- toYaml . | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          {{- if $root.Values.global.health.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - test
+                - "-f"
+                - {{ default $root.Values.global.health.path $inst.healthFile | quote }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            exec:
+              command:
+                - test
+                - "-f"
+                - {{ default $root.Values.global.health.path $inst.healthFile | quote }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: {{ $root.Values.global.health.readinessFailureThreshold | default 3 }}
+          {{- end }}
+          resources:
+            {{- if and $canOverride $inst.resources }}
+            {{- toYaml $inst.resources | nindent 12 }}
+            {{- else if $root.Values.global.resources }}
+            {{- toYaml $root.Values.global.resources | nindent 12 }}
+            {{- else }}
+            requests:
+              cpu: 100m
+              memory: 128Mi
+              ephemeral-storage: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+              ephemeral-storage: 256Mi
+          {{- end }}
+      {{- with $inst.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- /* Emit volumes only if we have any */}}
+  {{- $hasDockerVol := and (kindIs "map" $inst.dockerSocket) $inst.dockerSocket.enabled }}
+  {{- $hasMtlsVol := and (kindIs "map" $inst.mtls) $inst.mtls.enabled }}
+  {{- $hasUpdownVol := and (kindIs "map" $inst.updown) $inst.updown.enabled }}
+  {{- $hasExtraVols := gt (len (default (list) $inst.extraVolumes)) 0 }}
+      {{- if or $hasDockerVol $hasMtlsVol $hasUpdownVol $hasExtraVols }}
+      volumes:
+        {{- if and (kindIs "map" $inst.dockerSocket) $inst.dockerSocket.enabled }}
+        - name: docker-socket
+          hostPath:
+            path: {{ $inst.dockerSocket.path }}
+            type: Socket
+        {{- end }}
+        {{- if and (kindIs "map" $inst.mtls) $inst.mtls.enabled }}
+        - name: mtls-cert
+          {{- if $inst.mtls.secretName }}
+          secret:
+            secretName: {{ $inst.mtls.secretName }}
+          {{- else }}
+          secret:
+            secretName: {{ include "newt.instance.fullname" (dict "root" $root "inst" $inst) }}
+          {{- end }}
+        {{- end }}
+        {{- if and (kindIs "map" $inst.updown) $inst.updown.enabled }}
+        - name: updown-script
+          configMap:
+            name: {{ include "newt.instance.fullname" (dict "root" $root "inst" $inst) }}-updown
+            defaultMode: 0755
+        {{- end }}
+        {{- range $inst.extraVolumes }}
+        - {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- /* Merge global and instance scheduling: instance wins for map keys; tolerations concatenate */}}
+      {{- $gNode := (default (dict) $root.Values.global.nodeSelector) -}}
+      {{- $iNode := (default (dict) $inst.nodeSelector) -}}
+      {{- $node := mergeOverwrite (deepCopy $gNode) $iNode -}}
+      {{- if $node }}
+      nodeSelector:
+        {{- toYaml $node | nindent 8 }}
+      {{- end }}
+      {{- $gAff := (default (dict) $root.Values.global.affinity) -}}
+      {{- $iAff := (default (dict) $inst.affinity) -}}
+      {{- $aff := mergeOverwrite (deepCopy $gAff) $iAff -}}
+      {{- if $aff }}
+      affinity:
+        {{- toYaml $aff | nindent 8 }}
+      {{- end }}
+      {{- $gTol := (default (list) $root.Values.global.tolerations) -}}
+      {{- $iTol := (default (list) $inst.tolerations) -}}
+      {{- $tols := concat $gTol $iTol -}}
+      {{- if gt (len $tols) 0 }}
+      tolerations:
+        {{- toYaml $tols | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}

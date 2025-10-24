@@ -1,0 +1,53 @@
+{{- $gm := (default (dict) .Values.global.metrics) -}}
+{{- $tm := (default (dict) .Values.metrics) -}}
+{{- $m := mergeOverwrite (deepCopy $gm) $tm -}}
+{{- if and $m.enabled $m.podMonitor.enabled }}
+apiVersion: {{ $m.podMonitor.apiVersion | default "monitoring.coreos.com/v1" }}
+kind: PodMonitor
+metadata:
+  name: {{ include "newt.fullname" . }}
+  {{- with $m.podMonitor.namespace }}
+  {{- if . }}
+  namespace: {{ . }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+  {{- with $m.podMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $m.podMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  podMetricsEndpoints:
+    - port: {{ $m.podMonitor.portName | default "metrics" }}
+      {{- with $m.podMonitor.scheme }}
+      scheme: {{ . }}
+      {{- end }}
+      {{- with $m.podMonitor.path }}
+      path: {{ . }}
+      {{- end }}
+      {{- with $m.podMonitor.interval }}
+      interval: {{ . }}
+      {{- end }}
+      {{- with $m.podMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ . }}
+      {{- end }}
+      {{- with $m.podMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $m.podMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: newt
+  namespaceSelector:
+    matchNames:
+      - {{ include "newt.namespace" . }}
+{{- end }}

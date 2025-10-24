@@ -1,0 +1,26 @@
+{{- $gm := (default (dict) .Values.global.metrics) -}}
+{{- $tm := (default (dict) .Values.metrics) -}}
+{{- $m := mergeOverwrite (deepCopy $gm) $tm -}}
+{{- if and $m.enabled $m.prometheusRule.enabled }}
+apiVersion: {{ $m.prometheusRule.apiVersion | default "monitoring.coreos.com/v1" }}
+kind: PrometheusRule
+metadata:
+  name: {{ include "newt.fullname" . }}
+  {{- with $m.prometheusRule.namespace }}
+  {{- if . }}
+  namespace: {{ . }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- include "newt.labels" . | nindent 4 }}
+    {{- with .Values.global.metrics.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    {{- if $m.prometheusRule.rules }}
+    {{- toYaml $m.prometheusRule.rules | nindent 4 }}
+    {{- else }}
+    []
+    {{- end }}
+{{- end }}
