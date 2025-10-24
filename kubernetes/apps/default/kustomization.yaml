@@ -13,5 +13,5 @@ resources:
   - ./portainer/ks.yaml
   - ./it-tools/ks.yaml
   - ./vaultwarden/ks.yaml
-  # - ./newtk8s/ks.yaml
+  - ./newtk8s/ks.yaml
   - ./openspeedtest/ks.yaml
