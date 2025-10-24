@@ -13,8 +13,8 @@ spec:
         kind: HelmRepository
         name: fossorial
         namespace: flux-system
-  values: # <-- All your configuration should be under 'values'
-    global: # <-- Move this under 'values'
+  values:
+    global:
       logLevel: "INFO"
       resources:
         requests:
@@ -25,60 +25,30 @@ spec:
           cpu: "200m"
           memory: "256Mi"
           ephemeral-storage: "256Mi"
-    newtInstances: # <-- This should also be under 'values'
+    newtInstances:
       - name: "main-tunnel"
         allowGlobalOverride: false
         auth:
-          existingSecretName: ""
+          existingSecretName: "" # Keep empty for inline credentials
           keys:
-            endpointKey: ""
-            idKey: "o1dmghwxl799mca"
-            secretKey: "256t2np06yomo9h3vxrm41djk8gdtlk1op08ai2ptlco6sly"
+            endpointKey: "PANGOLIN_ENDPOINT" # These should be key names
+            idKey: "NEWT_ID"
+            secretKey: "NEWT_SECRET"
+        # Put the actual values here:
         pangolinEndpoint: "https://pangolin.hayani.xyz"
-        id: ""
-        secret: ""
+        id: "o1dmghwxl799mca" # Your actual ID goes here
+        secret: "256t2np06yomo9h3vxrm41djk8gdtlk1op08ai2ptlco6sly" # Your actual secret goes here
         healthFile: "/tmp/healthy"
         logLevel: "INFO"
         mtu: 1280
-        dns: ""
-        pingInterval: ""
-        pingTimeout: ""
         acceptClients: false
         useNativeInterface: false
         interface: "newt"
-        keepInterface: false
-        configFile: ""
-        generateAndSaveKeyTo: ""
-        dockerSocket:
-          enabled: false
-          path: "/var/run/docker.sock"
-          enforceNetworkValidation: false
-        mtls:
-          enabled: false
-          secretName: ""
-          certPath: "/certs/client.p12"
-          p12Base64: ""
-        updown:
-          enabled: false
-          script: ""
-          mountPath: "/opt/newt/updown"
-          fileName: "updown.sh"
-        podSecurityContext: {}
-        securityContext: {}
         service:
           enabled: true
           type: LoadBalancer
           port: 51820
           testerPort: 51821
-          externalTrafficPolicy: ""
-          loadBalancerIP: ""
-          loadBalancerClass: ""
-          loadBalancerSourceRanges: []
-          nodePorts:
-            wg: ""
-            tester: ""
-          annotations: {}
-          labels: {}
         resources:
           requests:
             cpu: "100m"
@@ -87,16 +57,3 @@ spec:
           limits:
             cpu: "500m"
             memory: "256Mi"
-        nodeSelector: {}
-        tolerations: []
-        affinity: {}
-        extraEnv: {}
-        extraVolumes: []
-        extraVolumeMounts: []
-        initContainers: []
-        extraContainers: []
-        useCommandArgs: false
-        hostNetwork: false
-        hostPID: false
-
-        #
