@@ -27,7 +27,7 @@ spec:
           ephemeral-storage: "256Mi"
     newtInstances:
       - name: "main-tunnel"
-        enabled: true # ← ADD THIS LINE!
+        enabled: true # ← This was the missing piece
         allowGlobalOverride: false
         auth:
           existingSecretName: ""
@@ -44,11 +44,35 @@ spec:
         acceptClients: false
         useNativeInterface: false
         interface: "newt"
+        # Add all the missing template fields to prevent nil pointer errors:
+        mtls:
+          enabled: false
+          secretName: ""
+          certPath: "/certs/client.p12"
+          p12Base64: ""
+        dockerSocket:
+          enabled: false
+          path: "/var/run/docker.sock"
+          enforceNetworkValidation: false
+        updown:
+          enabled: false
+          script: ""
+          mountPath: "/opt/newt/updown"
+          fileName: "updown.sh"
         service:
           enabled: true
           type: LoadBalancer
           port: 51820
           testerPort: 51821
+          externalTrafficPolicy: ""
+          loadBalancerIP: ""
+          loadBalancerClass: ""
+          loadBalancerSourceRanges: []
+          nodePorts:
+            wg: ""
+            tester: ""
+          annotations: {}
+          labels: {}
         resources:
           requests:
             cpu: "100m"
@@ -57,3 +81,22 @@ spec:
           limits:
             cpu: "500m"
             memory: "256Mi"
+        nodeSelector: {}
+        tolerations: []
+        affinity: {}
+        extraEnv: {}
+        extraVolumes: []
+        extraVolumeMounts: []
+        initContainers: []
+        extraContainers: []
+        useCommandArgs: false
+        hostNetwork: false
+        hostPID: false
+        podSecurityContext: {}
+        securityContext: {}
+        configFile: ""
+        generateAndSaveKeyTo: ""
+        keepInterface: false
+        dns: ""
+        pingInterval: ""
+        pingTimeout: ""
