@@ -1,0 +1,29 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app newt
+  namespace: flux-system
+spec:
+  interval: 1h
+  path: ./kubernetes/apps/default/newtk8s/app
+  # dependsOn:
+  #   - name: volsync
+  #     namespace: storage
+  # components:
+  #   - ../../../../components/volsync
+  #   - ../../../../components/gatus/guarded
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: default
+  # postBuild:
+  #   substitute:
+  #     APP: *app
+  #     VOLSYNC_CAPACITY: 129Mi
+  #     VOLSYNC_START_MINUTE: "11"
+  #     VOLSYNC_CACHE_CAPACITY: "1Gi"
+  #   substituteFrom:
+  #     - name: cluster-secrets
+  #       kind: Secret
