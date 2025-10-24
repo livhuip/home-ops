@@ -40,7 +40,7 @@ spec:
         secret: "256t2np06yomo9h3vxrm41djk8gdtlk1op08ai2ptlco6sly"
         healthFile: "/tmp/healthy"
         logLevel: "INFO"
-        mtu: "1280"
+        mtu: 1280
         acceptClients: false
         useNativeInterface: false
         interface: "newt"
