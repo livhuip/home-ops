@@ -49,7 +49,10 @@ spec:
             enabled: true
       ingress:
         enabled: true
-        ingressClassName: internal
+        ingressClassName: external
+        loadBalancerIP: 10.10.10.29
+
+
         # annotations:
         #   gethomepage.dev/enabled: "true"
         #   gethomepage.dev/icon: authentik.png
