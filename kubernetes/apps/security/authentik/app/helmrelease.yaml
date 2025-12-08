@@ -50,7 +50,7 @@ spec:
       ingress:
         enabled: true
         ingressClassName: external
-        loadBalancerIP: 10.10.10.29
+        # loadBalancerIP: 10.10.10.29
 
 
         # annotations:
