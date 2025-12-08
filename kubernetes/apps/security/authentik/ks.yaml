@@ -16,8 +16,8 @@ spec:
     name: flux-system
     namespace: flux-system
   dependsOn:
-    - name: crunchy-postgres-operator-cluster
-      namespace: database
+    # - name: crunchy-postgres-operator-cluster
+    #   namespace: database
     # - name: dragonfly-cluster
     #   namespace: database
     - name: onepassword-store
