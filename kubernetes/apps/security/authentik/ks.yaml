@@ -18,8 +18,8 @@ spec:
   dependsOn:
     - name: crunchy-postgres-operator-cluster
       namespace: database
-    - name: dragonfly-cluster
-      namespace: database
+    # - name: dragonfly-cluster
+    #   namespace: database
     - name: onepassword-store
       namespace: external-secrets
   components:
