@@ -149,3 +149,4 @@ echo "- Use --dry-run to preview changes"
 echo "- Use --namespace <ns> to limit to specific namespace"
 echo "- Some pending pods might be normal (waiting for resources)"
 echo "- Pods stuck in Terminating might need force deletion: kubectl delete pod <pod> --force --grace-period=0"
+
