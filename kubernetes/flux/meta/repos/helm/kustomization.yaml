@@ -33,7 +33,6 @@ resources:
   - ./nextcloud.yaml
   - ./runix.yaml
   - ./cloudnative-pg.yaml
-  - ./kubernetes-dashboard.yaml
   - ./authentik.yaml
   - ./tailscale.yaml
   - ./newt.yaml
