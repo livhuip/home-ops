@@ -12,7 +12,7 @@ resources:
   - ./dragonfly/ks.yaml
   # - ./pgadmin/ks.yaml
   # - ./redis/ks.yaml
-  - ./cloudnative-pg/ks.yaml
+  # - ./cloudnative-pg/ks.yaml
   # - ./emqx/ks.yaml
   # - ./influx/ks.yaml
 components:
