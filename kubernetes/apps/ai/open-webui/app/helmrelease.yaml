@@ -35,6 +35,7 @@ spec:
             envFrom: &envFrom
               - secretRef:
                   name: openwebui
+            command: ["/bin/sh", "-c", "echo 'Skipping DB init for migration'"]
         containers:
           app:
             image:
@@ -110,6 +111,6 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: *app
+        existingClaim: volsync-open-webui-dst-dest
         globalMounts:
           - path: /app/backend/data
