@@ -7,8 +7,6 @@ components:
   - ../../components/common
   - ../../components/repos/app-template
 resources:
-  - ./open-webui/ks.yaml
   # - ./n8n/ks.yaml
   # - ./ollama/ks.yaml
-  - ./litellm/ks.yaml
   #- ./wyoming-whisper/ks.yaml
