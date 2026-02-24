@@ -144,3 +144,7 @@ spec:
             subPath: npm
           - path: /tmp
             subPath: tmp
+      migrations:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/lib/python3.13/site-packages/litellm_proxy_extras/migrations
