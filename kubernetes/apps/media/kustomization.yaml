@@ -10,20 +10,20 @@ resources:
   # Pre Flux-Kustomizations
   # - ./namespace.yaml
   # Flux-Kustomizations
-  - ./autobrr/ks.yaml
+  # - ./autobrr/ks.yaml
   # - ./bazarr/ks.yaml
   # - ./cross-seed/ks.yaml
   # - ./maintainerr/ks.yaml
   # - ./omegabrr/ks.yaml
-  - ./jellyseerr/ks.yaml
-  - ./jellystat/ks.yaml
+  # - ./jellyseerr/ks.yaml
+  # - ./jellystat/ks.yaml
   # - ./prowlarr/ks.yaml
   # - ./qbittorrent/ks.yaml
   # - ./pterodactyl/ks.yaml
   # - ./radarr/ks.yaml
-  - ./recyclarr/ks.yaml
+  # - ./recyclarr/ks.yaml
   # - ./redlib/ks.yaml
   # - ./sabnzbd/ks.yaml
   # - ./sonarr/ks.yaml
   # - ./unpackerr/ks.yaml
-  - ./gonic/ks.yaml
+  # - ./gonic/ks.yaml
