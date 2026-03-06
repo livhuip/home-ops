@@ -15,7 +15,7 @@ resources:
   # - ./cross-seed/ks.yaml
   # - ./maintainerr/ks.yaml
   # - ./omegabrr/ks.yaml
-  - ./jellyseerr/ks.yaml
+  # - ./jellyseerr/ks.yaml
   # - ./jellystat/ks.yaml
   # - ./prowlarr/ks.yaml
   # - ./qbittorrent/ks.yaml
