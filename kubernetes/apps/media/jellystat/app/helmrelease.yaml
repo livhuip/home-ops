@@ -33,7 +33,7 @@ spec:
           main:
             image:
               repository: ghcr.io/cyfershepard/jellystat
-              tag: unstable@sha256:668ac24b27125ebc444f26eb09d0b54319fe65a68b6dcaf32f3ba048fb6313b3
+              tag: unstable@sha256:920996d19e1d8ab31362fdd216c41a7292215d276e8b6c2415f86ee42f3a044c
 
             env:
               TZ: "${TIMEZONE}"
